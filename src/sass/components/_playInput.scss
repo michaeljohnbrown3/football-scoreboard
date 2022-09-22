@@ -1,0 +1,44 @@
+.play-input {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 50%;
+  width: 70%;
+  background-color: $color-white;
+  font-size: 1.8rem;
+  display: none;
+  font-family: $primary-font;
+
+  &__logo-container {
+  }
+
+  &__type-inputs {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__click-inputs {
+    display: flex;
+    flex-direction: column;
+  }
+  &__logo {
+    max-height: 12rem;
+    max-width: 12rem;
+  }
+
+  &__pass {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    &--title {
+      text-align: center;
+    }
+  }
+
+  &__container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
+}

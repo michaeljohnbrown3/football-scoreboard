@@ -1,0 +1,25 @@
+.away-plays-container {
+  left: 0;
+}
+
+.home-plays-container {
+  right: 0;
+}
+
+.plays-container {
+  bottom: 8.4rem;
+  height: calc(100vh - 16.8rem);
+  height: 0;
+  width: calc(50vw - 15rem);
+  background-color: $color-score-background;
+  position: absolute;
+  overflow: hidden;
+}
+
+.play {
+  padding: 0.2rem;
+  border: 2px solid $color-black;
+  width: 100%;
+  height: 3rem;
+  font-size: 1.4rem;
+}

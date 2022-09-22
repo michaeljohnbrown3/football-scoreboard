@@ -1,0 +1,17 @@
+@import 'abstracts/animations';
+@import 'abstracts/mixins';
+@import 'abstracts/utilities';
+@import 'abstracts/variables';
+
+@import 'base/reset';
+@import 'base/typography';
+
+@import 'components/blurBackground';
+@import 'components/playInput';
+@import 'components/teamselect';
+
+@import 'layout/footer';
+@import 'layout/header';
+@import 'layout/plays';
+@import 'layout/stat';
+@import 'layout/teamstats';

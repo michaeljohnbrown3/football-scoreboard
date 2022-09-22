@@ -1,0 +1,59 @@
+.stat-container {
+  display: flex;
+  justify-content: center;
+  color: $color-white;
+  height: calc(100vh - 16.8rem);
+}
+
+.center-container {
+  background-color: $color-score-background;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  align-items: center;
+  width: 30rem;
+  border: 2px solid $color-black;
+  overflow: hidden;
+}
+
+.box-score {
+  font-size: 2rem;
+  font-family: $primary-font;
+
+  &__cell {
+    padding: 0.5rem;
+  }
+}
+
+.team-stats {
+  &__cell {
+    font-family: $primary-font;
+    font-size: 1.5rem;
+    text-align: center;
+    padding: 0.2rem;
+  }
+}
+
+.away-stats,
+.home-stats {
+  display: flex;
+  flex-direction: column;
+  font-family: $primary-font;
+  font-size: 1.2rem;
+  padding: 2rem 2rem;
+  width: calc(50vw - 15rem);
+  height: calc(100vh - 16.8rem);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow-y: auto;
+
+  &__table {
+    margin-left: 2rem;
+    margin-bottom: 1.5rem;
+  }
+}
+
+.stat-line-header {
+  padding: 0 1rem;
+}

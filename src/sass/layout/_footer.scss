@@ -1,0 +1,41 @@
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $color-white;
+  height: 8.4rem;
+  border: 2px solid $color-black;
+  background-color: $color-score-background;
+
+  &__away,
+  &__home {
+    width: calc(50% - 15rem);
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+  &__game {
+    width: 30rem;
+    display: flex;
+    justify-content: space-evenly;
+  }
+}
+
+.away-btn,
+.home-btn {
+  padding: 1rem;
+  border-radius: 10px;
+  font-family: $primary-font;
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  width: 10rem;
+}
+
+.game-btn {
+  padding: 1rem;
+  border-radius: 10px;
+  font-family: $primary-font;
+  font-size: 1.8rem;
+  text-transform: uppercase;
+  width: 8rem;
+}

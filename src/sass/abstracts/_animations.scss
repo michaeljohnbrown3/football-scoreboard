@@ -1,0 +1,8 @@
+@keyframes openUp {
+  0% {
+    height: 0;
+  }
+  100% {
+    height: calc(100vh - 16.8rem);
+  }
+}
