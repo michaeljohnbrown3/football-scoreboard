@@ -34,7 +34,7 @@ export const appendStatSheet = function (el, adv, team) {
               <th class="stat-line-header">LONG</th>
             </tr>
             <tr class="stat-line" id="${team}-rushers></tr>
-            <tr class="stat-line__total">
+            <tr class="stat-line__total" id="${team}-rusher-totals">
               <th>Total</th>
               <th class="${adv}-total-carries">0</th>
               <th class="${adv}-total-rush-yards">0</th>
@@ -54,16 +54,18 @@ export const appendStatSheet = function (el, adv, team) {
               <th class="stat-line-header">AVG</th>
               <th class="stat-line-header">TD</th>
               <th class="stat-line-header">LONG</th>
+              <th class="stat-line-header">TRGT</th>
             </tr>
-            <tr class="stat-line" id="${team}-receivers></tr>
-            <tr class="stat-line__total">
-            <th>Total</th>
-            <th>0</th>
-            <th>0</th>
-            <th>0.0</th>
-            <th>0</th>
-            <th>0</th>
-          </tr>
+            <tr class="stat-line"></tr>
+            <tr class="stat-line__total" id="${team}-receiving-totals">
+              <th>Total</th>
+              <th>0</th>
+              <th>0</th>
+              <th>0.0</th>
+              <th>0</th>
+              <th>0</th>
+              <th>0</th>
+            </tr>
           </table>
         </div>
         <div class="${adv}-stats__kick-returns">
