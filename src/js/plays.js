@@ -30,6 +30,13 @@ const playInputActionsRemove = function () {
   playInputContainer.style.display = 'none';
 };
 
+///// Stats appended and updated
+
+const updateTeamStat = function (team, statType, data) {
+  const teamStatEl = document.getElementById(`${team}-${statType}`);
+  teamStatEl.textContent = `${data}`;
+};
+
 const calcAvg = function (yards, denom) {
   return isNaN(yards / denom) ? 0 : Math.round((yards / denom) * 10) / 10;
 };
@@ -41,9 +48,9 @@ const appendPassStats = function (el, stats, team, id) {
   <th class="stat-line" id="${team}-name">${stats.name}</th>
   <th class="stat-line" id="${team}-compatt">${stats.comp}/${stats.att}</th>
   <th class="stat-line" id="${team}-yards">${stats.yards}</th>
-  <th class="stat-line" id="${team}-avg">${calcAvg(
-      stats.yards / stats.att
-    )}</th>
+  <th class="stat-line" id="${team}-avg">${
+      Math.round((stats.yards / stats.att) * 10) / 10
+    }</th>
   <th class="stat-line" id="${team}-td">${stats.td}</th>
   <th class="stat-line" id="${team}-int">${stats.int}</th>
   </tr>
@@ -72,9 +79,9 @@ const updatePassStats = function (el, stats, team) {
   <th class="stat-line" id="${team}-name">${stats.name}</th>
   <th class="stat-line" id="${team}-compatt">${stats.comp}/${stats.att}</th>
   <th class="stat-line" id="${team}-yards">${stats.yards}</th>
-  <th class="stat-line" id="${team}-avg">${calcAvg(
-    stats.yards / stats.att
-  )}</th>
+  <th class="stat-line" id="${team}-avg">${
+    Math.round((stats.yards / stats.att) * 10) / 10
+  }</th>
   <th class="stat-line" id="${team}-td">${stats.td}</th>
   <th class="stat-line" id="${team}-int">${stats.int}</th>
   `;
@@ -92,15 +99,21 @@ const updateRecStats = function (el, stats, team) {
   `;
 };
 
-const updateTotalPassStats = function (el, stats) {
+const updateTotalPassStats = function (el, stats, team) {
+  const teamPassYardsEl = document.getElementById(`${team}-passing-yards`);
+  const teamCompAttEl = document.getElementById(`${team}-comp-att`);
+  const teamYppEl = document.getElementById(`${team}-yards-pass`);
   el.innerHTML = `
   <th>Total</th>
   <th class="stat-line">${stats.comp}/${stats.att}</th>
   <th class="stat-line">${stats.yards}</th>
-  <th class="stat-line">${calcAvg(stats.yards / stats.att)}</th>
+  <th class="stat-line">${Math.round((stats.yards / stats.att) * 10) / 10}</th>
   <th class="stat-line">${stats.td}</th>
   <th class="stat-line">${stats.int}</th>
   `;
+  teamPassYardsEl.textContent = `${stats.yards}`;
+  teamCompAttEl.textContent = `${stats.comp}/${stats.att}`;
+  teamYppEl.textContent = `${Math.round((stats.yards / stats.att) * 10) / 10}`;
 };
 
 const updateTotalRecStats = function (el, stats) {
@@ -108,7 +121,7 @@ const updateTotalRecStats = function (el, stats) {
   <th>Total</th>
   <th class="stat-line">${stats.rec}</th>
   <th class="stat-line">${stats.yards}</th>
-  <th class="stat-line">${calcAvg(stats.yards / stats.rec)}</th>
+  <th class="stat-line">${calcAvg(stats.yards, stats.rec)}</th>
   <th class="stat-line">${stats.td}</th>
   <th class="stat-line">${stats.longrec}</th>
   `;
@@ -272,7 +285,6 @@ const createPassPlay = function (team) {
   if (passers.length > 0) {
     const selectedPasser = passers.find(pass => pass.name === passer);
     const selectedRec = receivers.find(rec => rec.name === receiver);
-    console.log(selectedRec);
 
     if (selectedPasser === undefined && selectedRec === undefined) {
       console.log('#1');
@@ -332,7 +344,7 @@ const createPassPlay = function (team) {
         receivers.push(newTotalReceivers);
         appendPassStats(passStatEl, newQb, teamId, newQb.id);
         appendRecStats(recStatEl, newWr, teamId, newWr.id);
-        updateTotalPassStats(passStatEl, newTotalPassers);
+        updateTotalPassStats(passStatEl, newTotalPassers, teamId);
         updateTotalRecStats(recStatEl, newTotalReceivers);
       } else {
         console.log('#3');
@@ -377,7 +389,7 @@ const createPassPlay = function (team) {
         receivers.push(newWr);
         appendPassStats(passStatEl, newQb, teamId, newQb.id);
         appendRecStats(recStatEl, newWr, teamId, newWr.id);
-        updateTotalPassStats(passStatEl, totalPassers);
+        updateTotalPassStats(passStatEl, totalPassers, teamId);
         updateTotalRecStats(recStatEl, totalReceivers);
       }
     }
@@ -436,7 +448,7 @@ const createPassPlay = function (team) {
       passers.push(newQb);
       appendPassStats(passStatEl, newQb, teamId, newQb.id);
       updateRecStats(wrStats, selectedRec, teamId);
-      updateTotalPassStats(passStatEl, totalPassers);
+      updateTotalPassStats(passStatEl, totalPassers, teamId);
       updateTotalRecStats(recStatEl, totalReceivers);
     }
 
@@ -495,7 +507,7 @@ const createPassPlay = function (team) {
       receivers.push(newWr);
       updatePassStats(qbStats, selectedPasser, teamId);
       appendRecStats(recStatEl, newWr, teamId, newWr.id);
-      updateTotalPassStats(passStatEl, totalPassers);
+      updateTotalPassStats(passStatEl, totalPassers, teamId);
       updateTotalRecStats(recStatEl, totalReceivers);
     }
 
@@ -538,7 +550,13 @@ const createPassPlay = function (team) {
       }
 
       if (touchdown === true) {
-        touchdownThrown(selectedPasser, totalPassers, teamId);
+        touchdownThrown(
+          selectedPasser,
+          totalPassers,
+          selectedRec,
+          totalReceivers,
+          teamId
+        );
       }
 
       if (interception === true) {
@@ -546,7 +564,7 @@ const createPassPlay = function (team) {
       }
       updatePassStats(qbStats, selectedPasser, teamId);
       updateRecStats(wrStats, selectedRec, teamId);
-      updateTotalPassStats(passStatEl, totalPassers);
+      updateTotalPassStats(passStatEl, totalPassers, teamId);
       updateTotalRecStats(recStatEl, totalReceivers);
     }
   }
@@ -588,7 +606,7 @@ const createPassPlay = function (team) {
     }
 
     if (touchdown == true) {
-      touchdownThrown(newQb, totalPassers, teamId);
+      touchdownThrown(newQb, totalPassers, newWr, totalReceivers, teamId);
     }
 
     if (interception == true) {
@@ -601,7 +619,7 @@ const createPassPlay = function (team) {
     receivers.push(totalReceivers);
     appendPassStats(passStatEl, newQb, teamId, newQb.id);
     appendRecStats(recStatEl, newWr, teamId, newWr.id);
-    updateTotalPassStats(passStatEl, totalPassers);
+    updateTotalPassStats(passStatEl, totalPassers, teamId);
     updateTotalRecStats(recStatEl, totalReceivers);
   }
 };

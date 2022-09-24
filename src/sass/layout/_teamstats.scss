@@ -1,3 +1,9 @@
 .team-stats {
   display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+
+  &__headers {
+    margin-top: 3.4rem;
+  }
 }

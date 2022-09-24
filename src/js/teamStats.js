@@ -1,3 +1,4 @@
+/*
 const awayFirstDownsDisplay = document.querySelector('.away-first-downs');
 const homeFirstDownsDisplay = document.querySelector('.home-first-downs');
 const awayTotalYdsDisplay = document.querySelector('.away-total-yards');
@@ -46,3 +47,4 @@ appendTwoNumTeamStat(awayPenaltiesDisplay, awayPenNum, awayPenYards);
 appendTwoNumTeamStat(homePenaltiesDisplay, homePenNum, homePenYards);
 appendTeamStats(awayTurnoversDisplay, awayTurnovers);
 appendTeamStats(homeTurnoversDisplay, homeTurnovers);
+*/

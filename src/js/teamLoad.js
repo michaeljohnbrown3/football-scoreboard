@@ -1,6 +1,7 @@
 import teams from './../assets/data/teams.json';
 import { appendStatSheet } from './playerStatsContainer';
 import { appendBoxScore } from './boxScoreContainer';
+import { appendTeamStats } from './teamStatsContainer';
 
 const awaySelector = document.querySelector('#away');
 const homeSelector = document.querySelector('#home');
@@ -92,7 +93,9 @@ export const kickoffInit = () => {
   teams.forEach(team => {
     if (awaySelected === team.id) {
       const awayPlayerStats = document.querySelector('.away-stats');
-      appendBoxScore(awayBoxScoreContainer, 'away', team.id);
+      const awayTeamStats = document.querySelector('.team-stats__away');
+      appendBoxScore(awayBoxScoreContainer, 'away', awaySelected);
+      appendTeamStats(awayTeamStats, 'away', awaySelected);
       const [...awayStatNames] = document.querySelectorAll('.away-name');
       appendLogo(team, awayLogo);
       setBackground(team, awayLogoContainer);
@@ -107,7 +110,9 @@ export const kickoffInit = () => {
     }
     if (homeSelected === team.id) {
       const homePlayerStats = document.querySelector('.home-stats');
-      appendBoxScore(homeBoxScoreContainer, 'home', team.id);
+      const homeTeamStats = document.querySelector('.team-stats__home');
+      appendBoxScore(homeBoxScoreContainer, 'home', homeSelected);
+      appendTeamStats(homeTeamStats, 'home', homeSelected);
       const [...homeStatNames] = document.querySelectorAll('.home-name');
       appendLogo(team, homeLogo);
       setBackground(team, homeLogoContainer);
