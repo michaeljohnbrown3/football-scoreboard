@@ -272,15 +272,19 @@ const createPassPlay = function (team) {
   if (passers.length > 0) {
     const selectedPasser = passers.find(pass => pass.name === passer);
     const selectedRec = receivers.find(rec => rec.name === receiver);
+    console.log(selectedRec);
 
     if (selectedPasser === undefined && selectedRec === undefined) {
+      console.log('#1');
       const newQb = new Player(passer, teamId);
       const newWr = new Player(receiver, teamId);
       const totalPassers = passers.find(pass => pass.id === `${teamId}-total`);
       const totalReceivers = receivers.find(
         rec => rec.id === `${teamId}-total`
       );
-      if (totalPassers === undefined && totalReceivers === undefined) {
+
+      if (totalPassers === undefined) {
+        console.log('#2');
         const newTotalPassers = new Player('Total', teamId);
         const newTotalReceivers = new Player('Total', teamId);
         if (complete === true) {
@@ -300,7 +304,6 @@ const createPassPlay = function (team) {
             newTotalReceivers
           );
         }
-
         if (incomplete == true) {
           passIncomplete(
             playsEl,
@@ -311,7 +314,6 @@ const createPassPlay = function (team) {
             newTotalReceivers
           );
         }
-
         if (touchdown == true) {
           touchdownThrown(
             newQb,
@@ -321,11 +323,9 @@ const createPassPlay = function (team) {
             newTotalReceivers
           );
         }
-
         if (interception == true) {
           interceptionThrown(newQb, newTotalPassers);
         }
-
         passers.push(newQb);
         passers.push(newTotalPassers);
         receivers.push(newWr);
@@ -334,8 +334,8 @@ const createPassPlay = function (team) {
         appendRecStats(recStatEl, newWr, teamId, newWr.id);
         updateTotalPassStats(passStatEl, newTotalPassers);
         updateTotalRecStats(recStatEl, newTotalReceivers);
-      } else if (totalPassers !== undefined && totalReceivers === undefined) {
-        const newTotalReceivers = new Player('Total', teamId);
+      } else {
+        console.log('#3');
         if (complete === true) {
           passComplete(
             playsEl,
@@ -350,7 +350,7 @@ const createPassPlay = function (team) {
             newQb,
             totalPassers,
             newWr,
-            newTotalReceivers
+            totalReceivers
           );
         }
 
@@ -361,55 +361,12 @@ const createPassPlay = function (team) {
             newQb,
             totalPassers,
             newWr,
-            newTotalReceivers
+            totalReceivers
           );
         }
 
         if (touchdown == true) {
-          touchdownThrown(
-            newQb,
-            totalPassers,
-            teamId,
-            newWr,
-            newTotalReceivers
-          );
-        }
-
-        if (interception == true) {
-          interceptionThrown(newQb, totalPassers);
-        }
-
-        passers.push(newQb);
-        passers.push(totalPassers);
-        receivers.push(newWr);
-        receivers.push(newTotalReceivers);
-        appendPassStats(passStatEl, newQb, teamId, newQb.id);
-        appendRecStats(recStatEl, newWr, teamId, newWr.id);
-        updateTotalPassStats(passStatEl, totalPassers);
-        updateTotalRecStats(recStatEl, newTotalReceivers);
-      } else {
-        if (complete === true) {
-          passComplete(
-            playsEl,
-            passer,
-            receiver,
-            yards,
-            touchdown,
-            firstDown,
-            fumbleLost,
-            twoPoints,
-            safety,
-            newQb,
-            totalPassers
-          );
-        }
-
-        if (incomplete == true) {
-          passIncomplete(playsEl, passer, newQb, totalPassers);
-        }
-
-        if (touchdown == true) {
-          touchdownThrown(newQb, totalPassers, teamId);
+          touchdownThrown(newQb, totalPassers, teamId, newWr, totalReceivers);
         }
 
         if (interception == true) {
@@ -425,10 +382,72 @@ const createPassPlay = function (team) {
       }
     }
 
-    if (selectedPasser !== undefined) {
-      const qbStats = document.getElementById(`${selectedPasser.id}`);
+    if (selectedPasser === undefined && selectedRec !== undefined) {
+      const newQb = new Player(passer, teamId);
       const wrStats = document.getElementById(`${selectedRec.id}`);
       const totalPassers = passers.find(pass => pass.id === `${teamId}-total`);
+      const totalReceivers = receivers.find(
+        rec => rec.id === `${teamId}-total`
+      );
+
+      if (complete === true) {
+        passComplete(
+          playsEl,
+          selectedPasser,
+          receiver,
+          yards,
+          touchdown,
+          firstDown,
+          fumbleLost,
+          twoPoints,
+          safety,
+          newQb,
+          totalPassers,
+          selectedRec,
+          totalReceivers
+        );
+      }
+
+      if (incomplete === true) {
+        passIncomplete(
+          playsEl,
+          newQb.name,
+          newQb,
+          totalPassers,
+          selectedRec,
+          totalReceivers
+        );
+      }
+
+      if (touchdown === true) {
+        touchdownThrown(
+          newQb,
+          totalPassers,
+          selectedRec,
+          totalReceivers,
+          teamId
+        );
+      }
+
+      if (interception === true) {
+        interceptionThrown(newQb, totalPassers);
+      }
+
+      passers.push(newQb);
+      appendPassStats(passStatEl, newQb, teamId, newQb.id);
+      updateRecStats(wrStats, selectedRec, teamId);
+      updateTotalPassStats(passStatEl, totalPassers);
+      updateTotalRecStats(recStatEl, totalReceivers);
+    }
+
+    if (selectedPasser !== undefined && selectedRec === undefined) {
+      console.log('#4');
+      const qbStats = document.getElementById(`${selectedPasser.id}`);
+      const newWr = new Player(receiver, teamId);
+      const totalPassers = passers.find(pass => pass.id === `${teamId}-total`);
+      const totalReceivers = receivers.find(
+        rec => rec.id === `${teamId}-total`
+      );
 
       if (complete === true) {
         passComplete(
@@ -442,7 +461,9 @@ const createPassPlay = function (team) {
           twoPoints,
           safety,
           selectedPasser,
-          totalPassers
+          totalPassers,
+          newWr,
+          totalReceivers
         );
       }
 
@@ -451,7 +472,68 @@ const createPassPlay = function (team) {
           playsEl,
           selectedPasser.name,
           selectedPasser,
-          totalPassers
+          totalPassers,
+          newWr,
+          totalReceivers
+        );
+      }
+
+      if (touchdown === true) {
+        touchdownThrown(
+          selectedPasser,
+          totalPassers,
+          newWr,
+          totalReceivers,
+          teamId
+        );
+      }
+
+      if (interception === true) {
+        interceptionThrown(selectedPasser, totalPassers);
+      }
+
+      receivers.push(newWr);
+      updatePassStats(qbStats, selectedPasser, teamId);
+      appendRecStats(recStatEl, newWr, teamId, newWr.id);
+      updateTotalPassStats(passStatEl, totalPassers);
+      updateTotalRecStats(recStatEl, totalReceivers);
+    }
+
+    if (selectedPasser !== undefined && selectedRec !== undefined) {
+      console.log('#5');
+      const qbStats = document.getElementById(`${selectedPasser.id}`);
+      const wrStats = document.getElementById(`${selectedRec.id}`);
+      const totalPassers = passers.find(pass => pass.id === `${teamId}-total`);
+      const totalReceivers = receivers.find(
+        rec => rec.id === `${teamId}-total`
+      );
+
+      if (complete === true) {
+        passComplete(
+          playsEl,
+          selectedPasser.name,
+          receiver,
+          yards,
+          touchdown,
+          firstDown,
+          fumbleLost,
+          twoPoints,
+          safety,
+          selectedPasser,
+          totalPassers,
+          selectedRec,
+          totalReceivers
+        );
+      }
+
+      if (incomplete === true) {
+        passIncomplete(
+          playsEl,
+          selectedPasser.name,
+          selectedPasser,
+          totalPassers,
+          selectedRec,
+          totalReceivers
         );
       }
 
@@ -470,10 +552,11 @@ const createPassPlay = function (team) {
   }
 
   if (passers.length === 0) {
+    console.log('Begin!');
     const newQb = new Player(passer, teamId);
     const newWr = new Player(receiver, teamId);
-    const totalPassers = new Player('Total Passing', teamId);
-    const totalReceivers = new Player('Total Receiving', teamId);
+    const totalPassers = new Player('Total', teamId);
+    const totalReceivers = new Player('Total', teamId);
 
     if (complete === true) {
       passComplete(
