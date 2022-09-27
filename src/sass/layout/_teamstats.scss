@@ -4,6 +4,11 @@
   justify-content: space-evenly;
 
   &__headers {
-    margin-top: 3.4rem;
+    margin-top: 3rem;
   }
+}
+
+.team-stats-container {
+  display: flex;
+  flex-direction: column;
 }

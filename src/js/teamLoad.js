@@ -68,6 +68,10 @@ const statsLogo = function (team, el) {
   });
 };
 
+const teamStatsLogo = function (team, el) {
+  el.innerHTML = `<img class="small-logo" src="img/${team.id}.png">`;
+};
+
 const applyBtnColor = function (team, el) {
   el.forEach(e => {
     e.style.backgroundColor = `${team.secondaryColor}`;
@@ -94,10 +98,15 @@ export const kickoffInit = () => {
     if (awaySelected === team.id) {
       const awayPlayerStats = document.querySelector('.away-stats');
       const awayTeamStats = document.querySelector('.team-stats__away');
+      awayTeamStats.setAttribute('id', `${awaySelected}-team-stats`);
+      const awayTeamStatsLogo = document.querySelector(
+        '.team-stats__away--logo'
+      );
       appendBoxScore(awayBoxScoreContainer, 'away', awaySelected);
-      appendTeamStats(awayTeamStats, 'away', awaySelected);
+      appendTeamStats(awayTeamStats, awaySelected);
       const [...awayStatNames] = document.querySelectorAll('.away-name');
       appendLogo(team, awayLogo);
+      teamStatsLogo(team, awayTeamStatsLogo);
       setBackground(team, awayLogoContainer);
       setBackground(team, awayName);
       appendName(team, awayName, awayRankInput);
@@ -111,10 +120,15 @@ export const kickoffInit = () => {
     if (homeSelected === team.id) {
       const homePlayerStats = document.querySelector('.home-stats');
       const homeTeamStats = document.querySelector('.team-stats__home');
+      homeTeamStats.setAttribute('id', `${homeSelected}-team-stats`);
+      const homeTeamStatsLogo = document.querySelector(
+        '.team-stats__home--logo'
+      );
       appendBoxScore(homeBoxScoreContainer, 'home', homeSelected);
-      appendTeamStats(homeTeamStats, 'home', homeSelected);
+      appendTeamStats(homeTeamStats, homeSelected);
       const [...homeStatNames] = document.querySelectorAll('.home-name');
       appendLogo(team, homeLogo);
+      teamStatsLogo(team, homeTeamStatsLogo);
       setBackground(team, homeLogoContainer);
       setBackground(team, homeName);
       appendName(team, homeName, homeRankInput);
