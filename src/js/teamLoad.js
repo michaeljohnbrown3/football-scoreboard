@@ -2,6 +2,7 @@ import teams from './../assets/data/teams.json';
 import { appendStatSheet } from './playerStatsContainer';
 import { appendBoxScore } from './boxScoreContainer';
 import { appendTeamStats } from './teamStatsContainer';
+import * as boxScoreContainer from './boxScoreContainer';
 
 const awaySelector = document.querySelector('#away');
 const homeSelector = document.querySelector('#home');
@@ -93,6 +94,8 @@ export const kickoffInit = () => {
 
   const awaySelected = awaySelector.value;
   const homeSelected = homeSelector.value;
+  const awayScore = document.querySelector('.header__away--score');
+  const homeScore = document.querySelector('.header__home--score');
 
   teams.forEach(team => {
     if (awaySelected === team.id) {
@@ -102,6 +105,7 @@ export const kickoffInit = () => {
       const awayTeamStatsLogo = document.querySelector(
         '.team-stats__away--logo'
       );
+      awayScore.setAttribute('id', `${awaySelected}-score`);
       appendBoxScore(awayBoxScoreContainer, 'away', awaySelected);
       appendTeamStats(awayTeamStats, awaySelected);
       const [...awayStatNames] = document.querySelectorAll('.away-name');
@@ -124,6 +128,7 @@ export const kickoffInit = () => {
       const homeTeamStatsLogo = document.querySelector(
         '.team-stats__home--logo'
       );
+      homeScore.setAttribute('id', `${homeSelected}-score`);
       appendBoxScore(homeBoxScoreContainer, 'home', homeSelected);
       appendTeamStats(homeTeamStats, homeSelected);
       const [...homeStatNames] = document.querySelectorAll('.home-name');
@@ -140,4 +145,12 @@ export const kickoffInit = () => {
       setPlaysContainerId(team.id, homePlaysContainers);
     }
   });
+  const boxScoreAway = boxScoreContainer.boxScoresArr.find(
+    team => team.id === awaySelected
+  );
+  const boxScoreHome = boxScoreContainer.boxScoresArr.find(
+    team => team.id === homeSelected
+  );
+  awayScore.textContent = boxScoreAway.calcScore();
+  homeScore.textContent = boxScoreHome.calcScore();
 };

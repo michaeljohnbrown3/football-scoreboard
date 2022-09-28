@@ -1,3 +1,6 @@
+import * as boxScoreContainer from './boxScoreContainer';
+
+/*
 const awayFirst = document.querySelector('.away-first');
 const awaySecond = document.querySelector('.away-second');
 const awayThird = document.querySelector('.away-third');
@@ -9,12 +12,14 @@ const homeSecond = document.querySelector('.home-second');
 const homeThird = document.querySelector('.home-third');
 const homeFourth = document.querySelector('.home-fourth');
 const homeScoreDisplay = document.querySelector('.header__home--score');
+*/
 
 const otHeader = document.querySelector('.ot-header');
 const quarterDisplay = document.querySelector('.header__quarter');
 const quarterAdvanceBtn = document.querySelector('.game-btn__quarter');
 const quarters = ['1st', '2nd', '3rd', '4th', '0T', 'FINAL'];
 
+/*
 let awayBoxScore = [0, 0, 0, 0, 0];
 let homeBoxScore = [0, 0, 0, 0, 0];
 let awayScore;
@@ -26,6 +31,7 @@ homeScore = homeBoxScore.reduce((prev, cur) => prev + cur, 0);
 const appendScore = function (score, el) {
   el.textContent = `${score}`;
 };
+*/
 
 // appendScore(awayBoxScore[0], awayFirst);
 // appendScore(awayBoxScore[1], awaySecond);
@@ -40,22 +46,37 @@ const appendScore = function (score, el) {
 // appendScore(homeBoxScore[4], homeOT);
 // appendScore(homeScore, homeScoreDisplay);
 
+let awayScore;
+let homeScore;
+
 let quarterIndex = 1;
-quarterAdvanceBtn.addEventListener('click', function advanceQuarter() {
+
+function advanceQuarter() {
   const awayOT = document.querySelector('.away-ot');
   const homeOT = document.querySelector('.home-ot');
+  awayScore = boxScoreContainer.boxScoresArr[0].calcScore();
+  homeScore = boxScoreContainer.boxScoresArr[1].calcScore();
 
-  if (quarterIndex == 4 && homeScore !== awayScore) {
+  function displayOvertime(el) {
+    el.removeAttribute('class', 'hidden');
+    el.setAttribute('class', 'box-score__cell');
+  }
+
+  if (quarterIndex === 4 && homeScore !== awayScore) {
     quarterDisplay.textContent = quarters[5];
   } else {
     quarterDisplay.textContent = quarters[quarterIndex++];
   }
-  if (quarterIndex == 6) {
+  if (quarterIndex === 6) {
     quarterAdvanceBtn.removeEventListener('click', advanceQuarter);
   }
-  if (quarterIndex == 5 && homeScore == awayScore) {
-    otHeader.removeAttribute('class', 'hidden');
-    awayOT.removeAttribute('class', 'hidden');
-    homeOT.removeAttribute('class', 'hidden');
+  if (quarterIndex === 5 && homeScore === awayScore) {
+    displayOvertime(otHeader);
+    displayOvertime(awayOT);
+    displayOvertime(homeOT);
   }
-});
+  quarterDisplay.dataset.quarter = `q${quarterIndex}`;
+  console.log(quarterIndex);
+}
+
+quarterAdvanceBtn.addEventListener('click', advanceQuarter);
