@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="img/favicon.ico">
     <title>Football Scoreboard 2.0</title>
-  <script defer src="bundle79f72b115adac9f06404.js"></script></head>
+  <script defer src="bundle773fc0dd36492aee20f5.js"></script></head>
   <body>
-    <div class="blur-background"></div>
+    <div id="blur-background" class="blur-background"></div>
+      
       <div class="team-select">
         <form class="team-select__away">
           <h2>Away Team</h2>
@@ -29,26 +30,30 @@
       <button class="start-game">KICKOFF!</button>
     </div>
 
+    <div class="play-input"></div>
+
     <header class="header">
       <div class="header__away">
         <div class="header__away--logo-container">
-          <img class="header__away--logo" src="img/fsu.png"></img>
+          <img class="header__away--logo" src=""></img>
         </div>
-        <div class="header__away--name"><span class="header__rank header__away-rank">2</span>FLORIDA ST</div>
+        <div class="header__away--name"><span class="header__rank header__away-rank">2</span>AWAY</div>
         <div class="header__score header__away--score">0</div>
       </div>
-      <div class="header__quarter">1st</div>
+      <div class="header__quarter" data-quarter="q1">1st</div>
       <div class="header__home">
         <div class="header__score header__home--score">0</div>
-        <div class="header__home--name"><span class="header__rank header__home-rank">1</span>LOUISIANA ST</div>
+        <div class="header__home--name"><span class="header__rank header__home-rank">1</span>HOME</div>
         <div class="header__home--logo-container">
-          <img class="header__home--logo" src="img/lsu.png"></img>
+          <img class="header__home--logo" src=""></img>
         </div>
       </div>
     </header>
 
     <main class="stat-container">
-      <div class="away-stats">Away Player Stats</div>
+      <div class="away-plays-container plays-container"></div>
+      <div class="home-plays-container plays-container"></div>
+      <div class="away-stats"></div>
       <div class="center-container">
         <div class="box-score">
           <table>
@@ -58,73 +63,107 @@
               <th class="box-score__cell">2nd</th>
               <th class="box-score__cell">3rd</th>
               <th class="box-score__cell">4th</th>
-              <th class="hidden box-score__cell">OT</th>
+              <th class="hidden box-score__cell ot-header">OT</th>
             </tr>
-            <tr class="box-score__away">
-              <th class="box-score__cell away-name">Away</th>
-              <th class="box-score__cell away-first">0</th>
-              <th class="box-score__cell away-second">0</th>
-              <th class="box-score__cell away-third">0</th>
-              <th class="box-score__cell away-fourth">0</th>
-              <th class="box-score__cell away-ot hidden">0</th>
-
-            </tr>
-            <tr class="box-score__home">
-              <th class="box-score__cell home-name">Home</th>
-              <th class="box-score__cell home-first">0</th>
-              <th class="box-score__cell home-second">0</th>
-              <th class="box-score__cell home-third">0</th>
-              <th class="box-score__cell home-fourth">0</th>
-              <th class="box-score__cell home-ot hidden">0</th>
-            </tr>
+            <tr class="box-score__away"></tr>
+            <tr class="box-score__home"></tr>
           </table>
         </div>
         <div class="team-stats">
-          <table>
-            <tr class="team-stats__header">
-              <th class="team-stats__cell">Away</th>
-              <th class="team-stats__cell"></th>
-              <th class="team-stats__cell">Home</th>
-            </tr>
-            <tr class="team-stats__header">
-              <th class="team-stats__cell away-first-downs">0</th>
-              <th class="team-stats__cell">1st Downs</th>
-              <th class="team-stats__cell home-first-downs">0</th>
-            </tr>
-            <tr class="team-stats__header">
-              <th class="team-stats__cell away-total-yards">0</th>
-              <th class="team-stats__cell">Total Yds</th>
-              <th class="team-stats__cell home-total-yards">0</th>
-            </tr>
-            <tr class="team-stats__header">
-              <th class="team-stats__cell away-passing-yards">0</th>
-              <th class="team-stats__cell">Passing Yds</th>
-              <th class="team-stats__cell home-passing-yards">0</th>
-            </tr>
-            <tr class="team-stats__header">
-              <th class="team-stats__cell away-rushing-yards">0</th>
-              <th class="team-stats__cell">Rushing Yds</th>
-              <th class="team-stats__cell home-rushing-yards">0</th>
-            </tr>
-            <tr class="team-stats__header">
-              <th class="team-stats__cell away-penalties">0-0</th>
-              <th class="team-stats__cell">Penalties</th>
-              <th class="team-stats__cell home-penalties">0-0</th>
-            </tr>
-            <tr class="team-stats__header">
-              <th class="team-stats__cell away-turnovers">0</th>
-              <th class="team-stats__cell">Turnovers</th>
-              <th class="team-stats__cell home-turnovers">0</th>
-            </tr>
+          <table class="team-stats__logos">
+            <th class="team-stats__away--logo"></th>
+            <th class="team-stats__logo-space"></th>
+            <th class="team-stats__home--logo"></th>
           </table>
+          <div class="team-stats__container">
+            <table class="team-stats__away"></table>
+            <table class="team-stats__headers">
+              <tr class="team-stats__header">
+                <th class="team-stats__cell"></th>
+              </tr>
+              <tr class="team-stats__header">
+                <th class="team-stats__cell">1st Downs</th>
+              </tr>
+              <tr class="team-stats__header">
+                <th class="team-stats__cell">Total Yards</th>
+              </tr>
+              <tr class="team-stats__header">
+                <td class="team-stats__cell">Total Plays</td>
+              </tr>
+              <tr class="team-stats__header">
+                <td class="team-stats__cell">Yards Per Play</td>
+              </tr>
+              <tr class="team-stats__header">
+                <th class="team-stats__cell">Passing Yards</th>
+              </tr>
+              <tr class="team-stats__header">
+                <td class="team-stats__cell">Comp/Att</td>
+              </tr>
+              <tr class="team-stats__header">
+                <td class="team-stats__cell">Yards Per Pass</td>
+              </tr>
+              <tr class="team-stats__header">
+                <th class="team-stats__cell">Rushing Yds</th>
+              </tr>
+              <tr class="team-stats__header">
+                <td class="team-stats__cell">Rushing Att</td>
+              </tr>
+              <tr class="team-stats__header">
+                <td class="team-stats__cell">Yards Per Rush</td>
+              </tr>
+              <tr class="team-stats__header">
+                <th class="team-stats__cell">Penalties</th>
+              </tr>
+              <tr class="team-stats__header">
+                <th class="team-stats__cell">Turnovers</th>
+              </tr>
+            </table>
+            <table class="team-stats__home"></table>
+          </div>
         </div>
       </div>
-      <div class="home-stats">Home Player Stats</div>
+      <div class="home-stats">
+        <div class="home-stats__passing">
+          <h2 class="home-stats__stat-header">Passing</h2>
+        </div>
+        <div class="home-stats__rushing">
+          <h2 class="home-stats__stat-header">Rushing</h2>
+        </div>
+        <div class="home-stats__receiving">
+          <h2 class="home-stats__stat-header">Receiving</h2>
+        </div>
+        <div class="home-stats__kick-returns">
+          <h2 class="home-stats__stat-header">Kick Returns</h2>
+        </div>
+        <div class="home-stats__punt-returns">
+          <h2 class="home-stats__stat-header">Punt Returns</h2>
+        </div>
+        <div class="home-stats__kicking">
+          <h2 class="home-stats__stat-header">Kicking</h2>
+        </div>
+      </div>
     </main>
 
     <footer class="button-container">
-      <div class="button-container__away">Away buttons</div>
-      <div class="button-container__home">Home buttons</div>
+      <div class="button-container__away">
+        <button class="away-btn away-btn__pass">Pass</button>
+        <button class="away-btn away-btn__rush">Rush</button>
+        <button class="away-btn away-btn__return">Return</button>
+        <button class="away-btn away-btn__kick">Kick</button>
+        <button class="away-btn away-btn__plays">Plays</button>
+      </div>
+      <div class="button-container__game">
+        <button class="game-btn game-btn__quarter">QTR</button>
+        
+        <button class="game-btn game-btn__revert">Pen</button>
+      </div>
+      <div class="button-container__home">
+        <button class="home-btn home-btn__pass">Pass</button>
+        <button class="home-btn home-btn__rush">Rush</button>
+        <button class="home-btn home-btn__return">Return</button>
+        <button class="home-btn home-btn__kick">Kick</button>
+        <button class="home-btn home-btn__plays">Plays</button>
+      </div>
     </footer>
   </body>
 </html>

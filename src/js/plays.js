@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import { passPlayMarkup } from './inputMarkupjs/passPlayMarkup';
 import { TeamStats } from './teamStats';
 import * as boxScore from './boxScore';
@@ -191,6 +192,8 @@ const updateScore = function (el, boxScore) {
   el.textContent = `${boxScore.calcScore()}`;
 };
 
+// Classes
+
 class Player {
   constructor(name, team) {
     this.name = name;
@@ -209,20 +212,21 @@ class Player {
   }
 }
 
-class PassPlay {
+class Play {
   constructor(
+    playId,
     passName,
     recName,
     comp,
     inc,
-    yards = 0,
+    yards,
     firstDown,
     td,
     int,
     fum,
-    two,
     safety
   ) {
+    this.playId = playId;
     this.passer = passName;
     this.receiver = recName;
     this.complete = comp;
@@ -232,11 +236,11 @@ class PassPlay {
     this.touchdown = td;
     this.interception = int;
     this.fumble = fum;
-    this.twoPoint = two;
     this.safety = safety;
-    this.playType = 'pass';
   }
 }
+
+// Data storage
 
 const passers = [];
 const rushers = [];
@@ -247,6 +251,8 @@ const kickers = [];
 const punters = [];
 const defensiveReturners = [];
 const plays = [];
+
+// Play results
 
 const passComplete = function (
   el,
@@ -262,21 +268,32 @@ const passComplete = function (
   totalQb,
   newWr,
   totalWr,
-  teamStat
+  teamStat,
+  playId,
+  teamId
 ) {
   el.insertAdjacentHTML(
     'beforeend',
     `
-    <div class="play plays-container__passing-play">
+    <div class="play plays-container__passing-play" id="play${playId}" data-play-id=${playId}>
+      <img src="img/${teamId}.png" class="play__logo">
       <p class="plays-container__passing-play--text">
       ${passer} pass complete to ${receiver} for ${yards} yards${
       touchdown
         ? ' and a TOUCHDOWN!'
         : `${firstDown ? ' and a First Down!' : ''}`
-    }${fumbleLost ? ' and lost a fumble' : ''}${
+    }${fumbleLost ? ' and fumbled' : ''}${
       twoPoints ? '. Two Point Conversion Successful' : ''
     }${safety ? ' and tackled for a SAFETY' : ''}
       </p>
+      <div class="play__btns">
+            <svg class="play__btn--icon play__btn--icon--edit" id="play${playId}-edit">
+              <use xlink:href="img/sprite.svg#icon-compose"></use>
+            </svg>
+            <svg class="play__btn--icon" id="play${playId}-delete">
+              <use xlink:href="img/sprite.svg#icon-squared-cross"></use>
+            </svg>
+        </div>
     </div>`
   );
   newQb.comp += 1;
@@ -305,6 +322,13 @@ const passComplete = function (
     teamStat.totalPlays
   );
   firstDown ? (teamStat.firstDowns += 1) : (teamStat.firstDowns += 0);
+
+  const editBtn = document.getElementById(`play${playId}-edit`);
+  const deleteBtn = document.getElementById(`play${playId}-delete`);
+  deleteBtn.addEventListener('click', function () {
+    plays.splice(playId - 1, 1);
+    console.log(`Play ${playId} deleted`);
+  });
 };
 
 const passIncomplete = function (
@@ -314,15 +338,26 @@ const passIncomplete = function (
   totalQb,
   newWr,
   totalWr,
-  teamStat
+  teamStat,
+  playId,
+  teamId
 ) {
   el.insertAdjacentHTML(
     'beforeend',
     `
-      <div class="play plays-container__passing-play">
+      <div class="play plays-container__passing-play" id="play${playId}" data-play-id=${playId}>
+        <img src="img/${teamId}.png" class="play__logo">
         <p class="plays-container__passing-play--text">
         ${passer} pass incomplete
         </p>
+        <div class="play__btns">
+            <svg class="play__btn--icon play__btn--icon--edit" id="play${playId}-edit">
+              <use xlink:href="img/sprite.svg#icon-compose"></use>
+            </svg>
+            <svg class="play__btn--icon" id="play${playId}-delete">
+              <use xlink:href="img/sprite.svg#icon-squared-cross"></use>
+            </svg>
+        </div>
       </div>
       `
   );
@@ -376,7 +411,10 @@ const createPassPlay = function (team) {
   const teamStatsEl = document.getElementById(`${team}-team-stats`);
   const playsEl = document.getElementById(`${team}-plays-container`);
   const teamScoreEl = document.getElementById(`${team}-score`);
+
   const quarter = document.querySelector(`.header__quarter`).dataset.quarter;
+  const playId = uuid();
+
   const passer = document.getElementById(`passer-${team}`).value;
   const receiver = document.getElementById(`receiver-${team}`).value;
   const yards = document.getElementById(`yards-${team}`).value;
@@ -389,6 +427,22 @@ const createPassPlay = function (team) {
   const twoPoints = document.getElementById(`two-points-${team}`).checked;
   const safety = document.getElementById(`safety-${team}`).checked;
   const teamId = team;
+
+  const newPlay = new Play(
+    playId,
+    passer,
+    receiver,
+    complete,
+    incomplete,
+    yards,
+    firstDown,
+    touchdown,
+    interception,
+    fumbleLost,
+    safety
+  );
+  plays.push(newPlay);
+  console.log(plays);
 
   const teamStatAlt = teamStatsContainer.teamStats.find(
     team => team.id === teamId
@@ -405,7 +459,6 @@ const createPassPlay = function (team) {
     );
 
     if (selectedPasser === undefined && selectedRec === undefined) {
-      console.log('#1');
       const newQb = new Player(passer, teamId);
       const newWr = new Player(receiver, teamId);
       const totalPassers = passers.find(pass => pass.id === `${teamId}-total`);
@@ -414,7 +467,6 @@ const createPassPlay = function (team) {
       );
 
       if (totalPassers === undefined) {
-        console.log('#2');
         const newTotalPassers = new Player('Total', teamId);
         const newTotalReceivers = new Player('Total', teamId);
         if (complete === true) {
@@ -432,7 +484,9 @@ const createPassPlay = function (team) {
             newTotalPassers,
             newWr,
             newTotalReceivers,
-            teamStatAlt
+            teamStatAlt,
+            playId,
+            teamId
           );
         }
         if (incomplete == true) {
@@ -443,7 +497,9 @@ const createPassPlay = function (team) {
             newTotalPassers,
             newWr,
             newTotalReceivers,
-            teamStatAlt
+            teamStatAlt,
+            playId,
+            teamId
           );
         }
         if (touchdown == true) {
@@ -467,9 +523,7 @@ const createPassPlay = function (team) {
         appendRecStats(recStatEl, newWr, teamId, newWr.id);
         updateTotalPassStats(passStatEl, newTotalPassers, teamId);
         updateTotalRecStats(recStatEl, newTotalReceivers);
-        // updateTeamStats(teamStatsEl, teamStatAlt, teamId);
       } else {
-        console.log('#3');
         if (complete === true) {
           passComplete(
             playsEl,
@@ -485,7 +539,9 @@ const createPassPlay = function (team) {
             totalPassers,
             newWr,
             totalReceivers,
-            teamStatAlt
+            teamStatAlt,
+            playId,
+            teamId
           );
         }
 
@@ -497,7 +553,9 @@ const createPassPlay = function (team) {
             totalPassers,
             newWr,
             totalReceivers,
-            teamStatAlt
+            teamStatAlt,
+            playId,
+            teamId
           );
         }
 
@@ -548,7 +606,9 @@ const createPassPlay = function (team) {
           totalPassers,
           selectedRec,
           totalReceivers,
-          teamStatAlt
+          teamStatAlt,
+          playId,
+          teamId
         );
       }
 
@@ -560,7 +620,9 @@ const createPassPlay = function (team) {
           totalPassers,
           selectedRec,
           totalReceivers,
-          teamStatAlt
+          teamStatAlt,
+          playId,
+          teamId
         );
       }
 
@@ -587,7 +649,6 @@ const createPassPlay = function (team) {
     }
 
     if (selectedPasser !== undefined && selectedRec === undefined) {
-      console.log('#4');
       const qbStats = document.getElementById(`${selectedPasser.id}`);
       const newWr = new Player(receiver, teamId);
       const totalPassers = passers.find(pass => pass.id === `${teamId}-total`);
@@ -610,7 +671,9 @@ const createPassPlay = function (team) {
           totalPassers,
           newWr,
           totalReceivers,
-          teamStatAlt
+          teamStatAlt,
+          playId,
+          teamId
         );
       }
 
@@ -622,7 +685,9 @@ const createPassPlay = function (team) {
           totalPassers,
           newWr,
           totalReceivers,
-          teamStatAlt
+          teamStatAlt,
+          playId,
+          teamId
         );
       }
 
@@ -646,11 +711,9 @@ const createPassPlay = function (team) {
       appendRecStats(recStatEl, newWr, teamId, newWr.id);
       updateTotalPassStats(passStatEl, totalPassers, teamId);
       updateTotalRecStats(recStatEl, totalReceivers);
-      // updateTeamStats(teamStatsEl, teamStatAlt, teamId);
     }
 
     if (selectedPasser !== undefined && selectedRec !== undefined) {
-      console.log('#5');
       const qbStats = document.getElementById(`${selectedPasser.id}`);
       const wrStats = document.getElementById(`${selectedRec.id}`);
       const totalPassers = passers.find(pass => pass.id === `${teamId}-total`);
@@ -673,7 +736,9 @@ const createPassPlay = function (team) {
           totalPassers,
           selectedRec,
           totalReceivers,
-          teamStatAlt
+          teamStatAlt,
+          playId,
+          teamId
         );
       }
 
@@ -685,7 +750,9 @@ const createPassPlay = function (team) {
           totalPassers,
           selectedRec,
           totalReceivers,
-          teamStatAlt
+          teamStatAlt,
+          playId,
+          teamId
         );
       }
 
@@ -707,7 +774,6 @@ const createPassPlay = function (team) {
       updateRecStats(wrStats, selectedRec, teamId);
       updateTotalPassStats(passStatEl, totalPassers, teamId);
       updateTotalRecStats(recStatEl, totalReceivers);
-      // updateTeamStats(teamStatsEl, teamStatAlt, teamId);
     }
   }
 
@@ -732,7 +798,9 @@ const createPassPlay = function (team) {
         totalPassers,
         newWr,
         totalReceivers,
-        teamStatAlt
+        teamStatAlt,
+        playId,
+        teamId
       );
     }
 
@@ -744,7 +812,9 @@ const createPassPlay = function (team) {
         totalPassers,
         newWr,
         totalReceivers,
-        teamStatAlt
+        teamStatAlt,
+        playId,
+        teamId
       );
     }
 

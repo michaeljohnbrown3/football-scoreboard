@@ -4,27 +4,53 @@
     {
       "icon": {
         "paths": [
-          "M192 128l640 384-640 384z"
+          "M960 1024h-896c-35.344 0-64-28.624-64-64v-896c0-35.376 28.656-64 64-64h640l-128 128h-448v768h768v-448l128-128v640c0 35.376-28.656 64-64 64zM256 768v-192l576-576h64l128 128v64l-576 576h-192zM544 544l352-352-64-64-352 352 64 64zM384 576l-64 64v64h64l64-64-64-64z"
         ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
         "tags": [
-          "play",
-          "player"
+          "compose",
+          "write",
+          "blog",
+          "edit"
         ],
-        "defaultCode": 59932,
-        "grid": 16,
-        "attrs": []
+        "grid": 16
       },
       "attrs": [],
       "properties": {
-        "ligatures": "play3, player8",
-        "name": "play3",
-        "order": 2,
-        "id": 285,
-        "prevSize": 32
+        "id": 35,
+        "order": 3,
+        "prevSize": 16,
+        "name": "compose"
       },
       "setIdx": 0,
-      "setId": 1,
-      "iconIdx": 284
+      "setId": 3,
+      "iconIdx": 34
+    },
+    {
+      "icon": {
+        "paths": [
+          "M819.2 102.4h-614.4c-56.32 0-102.4 46.080-102.4 102.4v614.4c0 56.32 46.080 102.4 102.4 102.4h614.4c56.32 0 102.4-46.080 102.4-102.4v-614.4c0-56.32-46.080-102.4-102.4-102.4zM668.723 757.197l-156.723-156.672-156.723 156.672-88.525-88.474 156.723-156.723-156.672-156.723 88.525-88.525 156.672 156.723 156.621-156.723 88.525 88.525-156.621 156.723 156.672 156.723-88.474 88.474z"
+        ],
+        "attrs": [],
+        "isMulticolor": false,
+        "isMulticolor2": false,
+        "tags": [
+          "squared-cross"
+        ],
+        "grid": 20
+      },
+      "attrs": [],
+      "properties": {
+        "id": 282,
+        "order": 4,
+        "prevSize": 20,
+        "name": "squared-cross"
+      },
+      "setIdx": 1,
+      "setId": 2,
+      "iconIdx": 281
     }
   ],
   "height": 1024,
@@ -47,12 +73,12 @@
     },
     "imagePref": {
       "prefix": "icon-",
-      "png": true,
+      "png": false,
       "useClassSelector": true,
       "color": 0,
       "bgColor": 16777215,
       "classSelector": ".icon",
-      "name": "icomoon",
+      "name": "ico-edit-delete",
       "height": 32,
       "columns": 16,
       "margin": 16

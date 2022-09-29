@@ -13,13 +13,46 @@
   width: calc(50vw - 15rem);
   background-color: $color-score-background;
   position: absolute;
-  overflow: hidden;
+  overflow-y: auto;
+  // overflow: hidden;
 }
 
 .play {
   padding: 0.2rem;
   border: 2px solid $color-black;
   width: 100%;
-  height: 3rem;
+  min-height: 3rem;
+  font-family: $primary-font;
   font-size: 1.4rem;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &__logo {
+    max-height: 2.5rem;
+    width: auto;
+  }
+  &__btns {
+    display: flex;
+    align-items: center;
+  }
+  &__btn {
+    height: 2.5rem;
+    width: 2.5rem;
+    background-color: $color-score-background;
+
+    &--icon {
+      max-height: 2.2rem;
+      max-width: 2.2rem;
+      fill: $color-red;
+      margin-left: 1rem;
+
+      &--edit {
+        max-height: 1.8rem;
+        max-width: 1.8rem;
+        fill: $color-white;
+      }
+    }
+  }
 }
