@@ -1,0 +1,231 @@
+.offensive-play-input {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  &__title {
+    margin-bottom: 2rem;
+  }
+}
+
+.play-input-close {
+  fill: $color-black;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  &__svg {
+    height: 3.5rem;
+    width: 3.5rem;
+  }
+
+  &:hover {
+    transform: translateY(-0.2rem);
+    filter: drop-shadow(0 1px 5px $color-grey);
+  }
+}
+
+.play-input-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.play-input__selectors {
+  width: 100%;
+  display: flex;
+}
+
+.play-input__selectors--pass,
+.play-input__selectors--rush {
+  display: none;
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.play-input__selectors--type {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+input[type='radio'] {
+  display: none;
+}
+
+input[type='checkbox'] {
+  display: none;
+}
+
+.play-input__selectors--type-btn {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 12rem;
+  width: 12rem;
+  font-size: 3rem;
+  color: $color-white;
+  border: 2px solid $color-black;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+}
+
+.play-input__player-input {
+  display: flex;
+  align-items: center;
+}
+
+.play-input__pass-players,
+.play-input__rush-players {
+  display: flex;
+  flex-direction: column;
+}
+
+.play-input__players {
+  border-radius: 20rem;
+  text-align: center;
+  height: 3.5rem;
+  font-size: 1.8rem;
+  &--number {
+    text-align: center;
+    border-radius: 20rem;
+    font-size: 2.2rem;
+    height: 3.5rem;
+    width: 6rem;
+  }
+}
+
+.play-input__completion-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 12rem;
+  width: 18rem;
+  font-size: 3rem;
+  color: $color-white;
+  border: 2px solid $color-black;
+  border-radius: 12px;
+}
+
+.complete-btn-background {
+  background-color: darken($color-green, 20%);
+
+  &:hover {
+    background-color: $color-green;
+  }
+}
+
+.incomplete-btn-background {
+  background-color: darken($color-red, 20%);
+
+  &:hover {
+    background-color: $color-red;
+  }
+}
+
+.play-input__pass-result {
+  display: flex;
+}
+
+.play-input__rush-options {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+
+  &--yards {
+    font-size: 1.8rem;
+  }
+
+  &--booleans {
+    display: flex;
+  }
+
+  &--boolean-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 5rem;
+    width: 10rem;
+    font-size: 1.5rem;
+    text-align: center;
+    color: $color-white;
+    border: 2px solid $color-black;
+    border-radius: 12px;
+    background-color: $color-score-background;
+  }
+
+  &--boolean-checkbox:checked ~ &--boolean-btn {
+    background-color: $color-green;
+  }
+}
+
+.play-input__pass-complete-options {
+  display: none;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+
+  &--yards {
+    font-size: 1.8rem;
+  }
+
+  &--booleans {
+    display: flex;
+  }
+
+  &--boolean-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 5rem;
+    width: 10rem;
+    font-size: 1.5rem;
+    text-align: center;
+    color: $color-white;
+    border: 2px solid $color-black;
+    border-radius: 12px;
+    background-color: $color-score-background;
+  }
+
+  &--boolean-checkbox:checked ~ &--boolean-btn {
+    background-color: $color-green;
+  }
+}
+
+.play-input__pass-yards-gained,
+.play-input__rush-yards-gained {
+  text-align: center;
+  border-radius: 20rem;
+  font-size: 2.2rem;
+  height: 3.5rem;
+  width: 10rem;
+}
+
+.play-input__pass-incomplete-options {
+  display: none;
+}
+
+.play-input__submit-container {
+  margin-top: 2rem;
+}
+
+.play-input__submit {
+  display: none;
+  height: 5rem;
+  width: 15rem;
+  text-transform: uppercase;
+  border-radius: 35px;
+  font-family: $primary-font;
+  font-size: 2rem;
+
+  &:hover {
+    transform: translateY(-0.3rem);
+    filter: drop-shadow(0 1px 5px $color-grey);
+  }
+}

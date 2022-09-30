@@ -3,12 +3,16 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  height: 50%;
+  height: auto;
   width: 70%;
+  padding: 5rem;
   background-color: $color-white;
   font-size: 1.8rem;
   display: none;
   font-family: $primary-font;
+  flex-direction: column;
+  justify-content: space-evenly;
+  z-index: 1000;
 
   &__logo-container {
   }
@@ -23,8 +27,9 @@
     flex-direction: column;
   }
   &__logo {
+    height: auto;
+    width: auto;
     max-height: 12rem;
-    max-width: 12rem;
   }
 
   &__pass {

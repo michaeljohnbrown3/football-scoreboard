@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { passPlayMarkup } from './inputMarkupjs/passPlayMarkup';
+import { offensivePlayMarkup } from './inputMarkupjs/passPlayMarkup';
 import { TeamStats } from './teamStats';
 import * as boxScore from './boxScore';
 import * as teamStatsContainer from './teamStatsContainer';
@@ -18,7 +19,38 @@ const playInputActions = function () {
   const playInputContainer = document.querySelector('.play-input');
 
   blurBackground.setAttribute('class', 'blur-background');
-  playInputContainer.style.display = 'block';
+  playInputContainer.style.display = 'flex';
+};
+
+const createCancel = function () {
+  const cancelButton = document.querySelector('.play-input-close');
+  cancelButton.addEventListener('click', () => {
+    const playInputContainer = document.querySelector('.play-input');
+    playInputActionsRemove();
+    playInputContainer.innerHTML = '';
+  });
+};
+
+const appendOffenseBackgroundImages = function () {
+  const passSelect = document.querySelector('.passer-background');
+  const rushSelect = document.querySelector('.rusher-background');
+
+  passSelect.style.backgroundImage = `linear-gradient(to right, rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url('img/qb.jpg')`;
+  rushSelect.style.backgroundImage = `linear-gradient(to right, rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url('img/rb.jpg')`;
+
+  passSelect.addEventListener('mouseover', () => {
+    passSelect.style.backgroundImage = `linear-gradient(to right, rgba(0, 0, 0, 0),rgba(0, 0, 0, 0)),url('img/qb.jpg')`;
+  });
+  passSelect.addEventListener('mouseleave', () => {
+    passSelect.style.backgroundImage = `linear-gradient(to right, rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url('img/qb.jpg')`;
+  });
+
+  rushSelect.addEventListener('mouseover', () => {
+    rushSelect.style.backgroundImage = `linear-gradient(to right, rgba(0, 0, 0, 0),rgba(0, 0, 0, 0)),url('img/rb.jpg')`;
+  });
+  rushSelect.addEventListener('mouseleave', () => {
+    rushSelect.style.backgroundImage = `linear-gradient(to right, rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 0.5)),url('img/rb.jpg')`;
+  });
 };
 
 const renderLogo = function (team) {
@@ -215,28 +247,52 @@ class Player {
 class Play {
   constructor(
     playId,
+    playType,
+    quarter,
+    passNum,
     passName,
+    recNum,
     recName,
+    rushNum,
+    rushName,
+    passYards,
+    rushYards,
     comp,
     inc,
-    yards,
-    firstDown,
-    td,
+    passTd,
+    rushTd,
+    passFirstDown,
+    rushFirstDown,
+    passFumbleLost,
+    rushFumbleLost,
+    passSafety,
+    rushSafety,
     int,
-    fum,
-    safety
+    teamId
   ) {
     this.playId = playId;
+    this.playType = playType;
+    this.quarter = quarter;
+    this.passerNumber = passNum;
     this.passer = passName;
+    this.receiverNumber = recNum;
     this.receiver = recName;
+    this.rusherNumber = rushNum;
+    this.rusher = rushName;
+    this.passingYards = passYards;
+    this.rushingYards = rushYards;
     this.complete = comp;
     this.incomplete = inc;
-    this.yards = yards;
-    this.firstDown = firstDown;
-    this.touchdown = td;
+    this.passingTouchdown = passTd;
+    this.rushingTouchdown = rushTd;
+    this.passingFirstDown = passFirstDown;
+    this.rushingFirstDown = rushFirstDown;
+    this.passingFumbleLost = passFumbleLost;
+    this.rushingFumbleLost = rushFumbleLost;
+    this.passingSafety = passSafety;
+    this.rushingSafety = rushSafety;
     this.interception = int;
-    this.fumble = fum;
-    this.safety = safety;
+    this.team = teamId;
   }
 }
 
@@ -405,45 +461,116 @@ const interceptionThrown = function (newQb, totalQb, teamStat) {
   teamStat.turnovers += 1;
 };
 
-const createPassPlay = function (team) {
+const createPlay = function (team) {
   const passStatEl = document.getElementById(`${team}-passer-totals`);
   const recStatEl = document.getElementById(`${team}-receiving-totals`);
   const teamStatsEl = document.getElementById(`${team}-team-stats`);
   const playsEl = document.getElementById(`${team}-plays-container`);
   const teamScoreEl = document.getElementById(`${team}-score`);
 
-  const quarter = document.querySelector(`.header__quarter`).dataset.quarter;
-  const playId = uuid();
+  const playTypeDefine = function () {
+    if (document.getElementById(`${team}-pass-input`).checked) {
+      return 'pass';
+    }
+    if (document.getElementById(`${team}-rush-input`).checked) {
+      return 'rush';
+    }
+  };
 
+  const convertCheckedToValue = function (input) {
+    return input ? 1 : 0;
+  };
+
+  const playId = uuid();
+  const playType = playTypeDefine();
+  const quarter = document.querySelector(`.header__quarter`).dataset.quarter;
+
+  const passerNumber = document.getElementById(`passer-${team}-number`).value;
   const passer = document.getElementById(`passer-${team}`).value;
+  const receiverNumber = document.getElementById(
+    `receiver-${team}-number`
+  ).value;
   const receiver = document.getElementById(`receiver-${team}`).value;
-  const yards = document.getElementById(`yards-${team}`).value;
-  const complete = document.getElementById(`complete-${team}`).checked;
-  const incomplete = document.getElementById(`incomplete-${team}`).checked;
-  const firstDown = document.getElementById(`first-down-${team}`).checked;
-  const touchdown = document.getElementById(`touchdown-${team}`).checked;
-  const interception = document.getElementById(`interception-${team}`).checked;
-  const fumbleLost = document.getElementById(`fumble-lost-${team}`).checked;
-  const twoPoints = document.getElementById(`two-points-${team}`).checked;
-  const safety = document.getElementById(`safety-${team}`).checked;
+  const rusherNumber = document.getElementById(`rusher-${team}-number`).value;
+  const rusher = document.getElementById(`rusher-${team}`).value;
+
+  const passingYards = document.getElementById(
+    `${team}-passing-yards-gained`
+  ).value;
+  const rushingYards = document.getElementById(
+    `${team}-rushing-yards-gained`
+  ).value;
+
+  const complete = convertCheckedToValue(
+    document.getElementById(`${team}-complete`).checked
+  );
+  const incomplete = convertCheckedToValue(
+    document.getElementById(`${team}-incomplete`).checked
+  );
+
+  const passingTouchdown = convertCheckedToValue(
+    document.getElementById(`${team}-passing-touchdown`).checked
+  );
+  const rushingTouchdown = convertCheckedToValue(
+    document.getElementById(`${team}-rushing-touchdown`).checked
+  );
+
+  const passingFirstDown = convertCheckedToValue(
+    document.getElementById(`${team}-passing-first-down`).checked
+  );
+  const rushingFirstDown = convertCheckedToValue(
+    document.getElementById(`${team}-rushing-first-down`).checked
+  );
+
+  const passingFumbleLost = convertCheckedToValue(
+    document.getElementById(`${team}-passing-fumble-lost`).checked
+  );
+  const rushingFumbleLost = convertCheckedToValue(
+    document.getElementById(`${team}-rushing-fumble-lost`).checked
+  );
+
+  const passingSafety = convertCheckedToValue(
+    document.getElementById(`${team}-passing-safety`).checked
+  );
+  const rushingSafety = convertCheckedToValue(
+    document.getElementById(`${team}-rushing-safety`).checked
+  );
+
+  const interception = convertCheckedToValue(
+    document.getElementById(`${team}-interception`).checked
+  );
+
   const teamId = team;
 
   const newPlay = new Play(
     playId,
+    playType,
+    quarter,
+    passerNumber,
     passer,
+    receiverNumber,
     receiver,
+    rusherNumber,
+    rusher,
+    passingYards,
+    rushingYards,
     complete,
     incomplete,
-    yards,
-    firstDown,
-    touchdown,
+    passingTouchdown,
+    rushingTouchdown,
+    passingFirstDown,
+    rushingFirstDown,
+    passingFumbleLost,
+    rushingFumbleLost,
+    passingSafety,
+    rushingSafety,
     interception,
-    fumbleLost,
-    safety
+    teamId
   );
   plays.push(newPlay);
   console.log(plays);
 
+  /*
   const teamStatAlt = teamStatsContainer.teamStats.find(
     team => team.id === teamId
   );
@@ -845,6 +972,7 @@ const createPassPlay = function (team) {
   updateTeamStats(teamStatsEl, teamStatAlt, teamId);
   updateBoxScore(teamId, quarter, boxScoreAlt);
   updateScore(teamScoreEl, boxScoreAlt);
+  */
 };
 
 const submitBtnAction = function (team) {
@@ -852,7 +980,7 @@ const submitBtnAction = function (team) {
   submitBtn.addEventListener('click', e => {
     e.preventDefault();
     playInputActionsRemove();
-    createPassPlay(team);
+    createPlay(team);
   });
 };
 
@@ -860,7 +988,9 @@ export const displayPassPlayInput = function (team) {
   playInputActions();
 
   const playInputContainer = document.querySelector('.play-input');
-  passPlayMarkup(playInputContainer, team);
+  offensivePlayMarkup(playInputContainer, team);
+  createCancel();
   renderLogo(team);
+  appendOffenseBackgroundImages();
   submitBtnAction(team);
 };
