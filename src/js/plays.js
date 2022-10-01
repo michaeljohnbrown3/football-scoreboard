@@ -226,6 +226,40 @@ const updateScore = function (el, boxScore) {
 
 // Classes
 
+class Team {
+  constructor(teamId) {
+    this.id = teamId;
+    this.q1Score = 0;
+    this.q2Score = 0;
+    this.q3Score = 0;
+    this.q4Score = 0;
+    this.q5Score = 0;
+    this.totalScore = 0;
+    this.firstDowns = 0;
+    this.totalPlays = 0;
+    this.yardsPerPlay = 0;
+    this.passingYards = 0;
+    this.completions = 0;
+    this.passingAttempts = 0;
+    this.yardsPerPass = 0;
+    this.rushingYards = 0;
+    this.yardsPerRush = 0;
+    this.penalties = 0;
+    this.penaltyYards = 0;
+    this.turnovers = 0;
+  }
+
+  scoreSum() {
+    return (
+      this.q1Score + this.q2Score + this.q3Score + this.q4Score + this.q5Score
+    );
+  }
+
+  perPlayCalc(yards, attempts) {
+    return Math.round((yards / attempts) * 10) / 10;
+  }
+}
+
 class Player {
   constructor(name, number, team) {
     this.name = name;
@@ -233,15 +267,19 @@ class Player {
     this.playerId = uuid();
     this.passingYards = 0;
     this.rushingYards = 0;
-    this.complete = 0;
-    this.incomplete = 0;
+    this.receivingYards = 0;
+    this.completions = 0;
+    this.incompletions = 0;
     this.passAttempts = 0;
+    this.rushAttempts = 0;
     this.targets = 0;
     this.receptions = 0;
     this.longestPass = 0;
     this.longestRush = 0;
+    this.longestReception = 0;
     this.passingTouchdowns = 0;
     this.rushingTouchdowns = 0;
+    this.receivingTouchdowns = 0;
     this.interceptions = 0;
     this.teamId = team;
     this.plays = [];
@@ -277,8 +315,8 @@ class Play {
     this.passer = passName;
     this.receiver = recName;
     this.rusher = rushName;
-    this.passingYards = passYards;
-    this.rushingYards = rushYards;
+    this.passingYards = passYards * 1;
+    this.rushingYards = rushYards * 1;
     this.complete = comp;
     this.incomplete = inc;
     this.passingTouchdown = passTd;
@@ -296,19 +334,12 @@ class Play {
 
 // Data storage
 
-const passers = [];
-const rushers = [];
-const receivers = [];
-const kickReturners = [];
-const puntReturners = [];
-const kickers = [];
-const punters = [];
-const defensiveReturners = [];
 const plays = [];
 const players = [];
+const teams = [];
 
 // Play results
-
+/*
 const passComplete = function (
   el,
   passer,
@@ -459,6 +490,7 @@ const interceptionThrown = function (newQb, totalQb, teamStat) {
   totalQb.int += 1;
   teamStat.turnovers += 1;
 };
+*/
 
 const createPlay = function (team) {
   const passStatEl = document.getElementById(`${team}-passer-totals`);
@@ -496,10 +528,38 @@ const createPlay = function (team) {
 
   const nameFunction = function (selector, number, name) {
     if (selector !== null) {
-      return selector.value;
+      let playerName;
+      players.forEach(player => {
+        if (player.playerId === selector.value) {
+          playerName = player.name;
+          player.plays.push(playId);
+        }
+      });
+      return playerName;
     }
     if (number !== null && name !== null) {
       return name.value;
+    }
+  };
+
+  const selectedPlayerFunction = function (selector, number, name) {
+    if (selector !== null) {
+      let playerId;
+      players.forEach(player => {
+        if (player.playerId === selector.value) {
+          playerId = player.playerId;
+        }
+      });
+      return playerId;
+    }
+    if (number !== null && name !== null) {
+      let playerId;
+      players.forEach(player => {
+        if (player.name === name.value) {
+          playerId = player.playerId;
+        }
+      });
+      return playerId;
     }
   };
 
@@ -590,7 +650,93 @@ const createPlay = function (team) {
   );
   plays.push(newPlay);
 
+  if (teams.length === 0) {
+    const newTeam = new Team(teamId);
+    teams.push(newTeam);
+  }
+
+  if (teams.length !== 0) {
+    teams.forEach(team => {
+      console.log(team.id);
+      console.log(teamId);
+      if (team.id === teamId) {
+        return;
+      }
+      if (team.id !== teamId) {
+        const newTeam = new Team(teamId);
+        teams.push(newTeam);
+      }
+    });
+  }
+
   console.log(plays);
+  console.log(players);
+  console.log(teams);
+
+  const selectedPlayer = function () {
+    if (passerSelector !== null) {
+      return;
+    }
+  };
+
+  const selectedPasser = selectedPlayerFunction(
+    passerSelector,
+    passerNumber,
+    passerName
+  );
+
+  const selectedReceiver = selectedPlayerFunction(
+    receiverSelector,
+    receiverNumber,
+    receiverName
+  );
+
+  const selectedRusher = selectedPlayerFunction(
+    rusherSelector,
+    rusherNumber,
+    rusherName
+  );
+
+  const updatePassingStats = function () {
+    players.forEach(player => {
+      if (player.playerId === selectedPasser) {
+        player.completions += newPlay.complete;
+        player.incompletions += newPlay.incomplete;
+        player.passAttempts += newPlay.complete + newPlay.incomplete;
+        player.passingYards += newPlay.passingYards;
+        player.longestPass = 'tbd';
+        player.passingTouchdowns = newPlay.passingTouchdown;
+        player.interceptions = newPlay.interception;
+      }
+    });
+  };
+
+  const updateReceivingStats = function () {
+    players.forEach(player => {
+      if (player.playerId === selectedReceiver) {
+        player.receptions += newPlay.complete;
+        player.targets += newPlay.complete + newPlay.incomplete;
+        player.receivingYards += newPlay.passingYards;
+        player.longestReception = 'tbd';
+        player.receivingTouchdowns = newPlay.passingTouchdown;
+      }
+    });
+  };
+
+  const updateRushingStats = function () {
+    players.forEach(player => {
+      if (player.playerId === selectedRusher) {
+        player.rushingYards = newPlay.rushingYards;
+        player.rushAttempts += 1;
+        player.longestRush = 'tbd';
+        player.rushingTouchdowns += newPlay.rushingTouchdown;
+      }
+    });
+  };
+
+  updatePassingStats();
+  updateReceivingStats();
+  updateRushingStats();
   console.log(players);
 
   /*
@@ -1015,14 +1161,12 @@ const appendPlayerSelector = function (el, team, type, typeUp) {
   `;
   const playerSelector = document.getElementById(`${type}-selector-${team}`);
   const sortedPlayers = players.sort((a, b) => a.number - b.number);
-  console.log(sortedPlayers);
 
   sortedPlayers.forEach(player => {
     if (player.teamId === team) {
       const playerOption = document.createElement('option');
       playerOption.textContent = `${player.number} - ${player.name}`;
-      playerOption.value = `${player.name}`;
-      playerOption.id = `${player.playerId}`;
+      playerOption.value = `${player.playerId}`;
       playerOption.setAttribute('class', 'selector-options');
       playerSelector.appendChild(playerOption);
     }
