@@ -229,7 +229,7 @@ const updateScore = function (el, boxScore) {
 class Player {
   constructor(name, number, team) {
     this.name = name;
-    this.number = number;
+    this.number = number * 1;
     this.playerId = uuid();
     this.passingYards = 0;
     this.rushingYards = 0;
@@ -253,11 +253,8 @@ class Play {
     playId,
     playType,
     quarter,
-    passNum,
     passName,
-    recNum,
     recName,
-    rushNum,
     rushName,
     passYards,
     rushYards,
@@ -277,11 +274,8 @@ class Play {
     this.playId = playId;
     this.playType = playType;
     this.quarter = quarter;
-    this.passerNumber = passNum;
     this.passer = passName;
-    this.receiverNumber = recNum;
     this.receiver = recName;
-    this.rusherNumber = rushNum;
     this.rusher = rushName;
     this.passingYards = passYards;
     this.rushingYards = rushYards;
@@ -490,16 +484,28 @@ const createPlay = function (team) {
   const playType = playTypeDefine();
   const quarter = document.querySelector(`.header__quarter`).dataset.quarter;
 
-  const passerNumber = document.getElementById(`passer-${team}-number`).value;
-  const passer = document.getElementById(`passer-${team}`).value;
+  const passerSelector = document.getElementById(`passer-selector-${team}`);
+  const passerName = document.getElementById(`passer-${team}`);
+  const passerNumber = document.getElementById(`passer-${team}-number`);
+  const receiverSelector = document.getElementById(`receiver-selector-${team}`);
+  const receiverName = document.getElementById(`receiver-${team}`);
+  const receiverNumber = document.getElementById(`receiver-${team}-number`);
+  const rusherSelector = document.getElementById(`rusher-selector-${team}`);
+  const rusherName = document.getElementById(`rusher-${team}`);
+  const rusherNumber = document.getElementById(`rusher-${team}-number`);
 
-  const receiverNumber = document.getElementById(
-    `receiver-${team}-number`
-  ).value;
-  const receiver = document.getElementById(`receiver-${team}`).value;
+  const nameFunction = function (selector, number, name) {
+    if (selector !== null) {
+      return selector.value;
+    }
+    if (number !== null && name !== null) {
+      return name.value;
+    }
+  };
 
-  const rusherNumber = document.getElementById(`rusher-${team}-number`).value;
-  const rusher = document.getElementById(`rusher-${team}`).value;
+  const passer = nameFunction(passerSelector, passerNumber, passerName);
+  const receiver = nameFunction(receiverSelector, receiverNumber, receiverName);
+  const rusher = nameFunction(rusherSelector, rusherNumber, rusherName);
 
   const passingYards = document.getElementById(
     `${team}-passing-yards-gained`
@@ -507,78 +513,65 @@ const createPlay = function (team) {
   const rushingYards = document.getElementById(
     `${team}-rushing-yards-gained`
   ).value;
-
   const complete = convertCheckedToValue(
     document.getElementById(`${team}-complete`).checked
   );
   const incomplete = convertCheckedToValue(
     document.getElementById(`${team}-incomplete`).checked
   );
-
   const passingTouchdown = convertCheckedToValue(
     document.getElementById(`${team}-passing-touchdown`).checked
   );
   const rushingTouchdown = convertCheckedToValue(
     document.getElementById(`${team}-rushing-touchdown`).checked
   );
-
   const passingFirstDown = convertCheckedToValue(
     document.getElementById(`${team}-passing-first-down`).checked
   );
   const rushingFirstDown = convertCheckedToValue(
     document.getElementById(`${team}-rushing-first-down`).checked
   );
-
   const passingFumbleLost = convertCheckedToValue(
     document.getElementById(`${team}-passing-fumble-lost`).checked
   );
   const rushingFumbleLost = convertCheckedToValue(
     document.getElementById(`${team}-rushing-fumble-lost`).checked
   );
-
   const passingSafety = convertCheckedToValue(
     document.getElementById(`${team}-passing-safety`).checked
   );
   const rushingSafety = convertCheckedToValue(
     document.getElementById(`${team}-rushing-safety`).checked
   );
-
   const interception = convertCheckedToValue(
     document.getElementById(`${team}-interception`).checked
   );
-
   const teamId = team;
 
-  if (passer !== '') {
-    const newPasser = new Player(passer, passerNumber, teamId);
+  if (passerName !== null && passerName.value !== '') {
+    const newPasser = new Player(passer, passerNumber.value, teamId);
     newPasser.plays.push(playId);
     players.push(newPasser);
-    console.log(players);
   }
 
-  if (receiver !== '') {
-    const newReceiver = new Player(receiver, receiverNumber, teamId);
+  if (receiverName !== null && receiverName.value !== '') {
+    const newReceiver = new Player(receiver, receiverNumber.value, teamId);
     newReceiver.plays.push(playId);
     players.push(newReceiver);
-    console.log(players);
   }
 
-  if (rusher !== '') {
-    const newRusher = new Player(rusher, rusherNumber, teamId);
+  if (rusherName !== null && rusherName.value !== '') {
+    const newRusher = new Player(rusher, rusherNumber.value, teamId);
     newRusher.plays.push(playId);
     players.push(newRusher);
-    console.log(players);
   }
 
   const newPlay = new Play(
     playId,
     playType,
     quarter,
-    passerNumber,
     passer,
-    receiverNumber,
     receiver,
-    rusherNumber,
     rusher,
     passingYards,
     rushingYards,
@@ -595,9 +588,10 @@ const createPlay = function (team) {
     interception,
     teamId
   );
-
   plays.push(newPlay);
+
   console.log(plays);
+  console.log(players);
 
   /*
   const teamStatAlt = teamStatsContainer.teamStats.find(
@@ -1015,14 +1009,20 @@ const submitBtnAction = function (team) {
 
 const appendPlayerSelector = function (el, team, type, typeUp) {
   el.innerHTML = `
-    <select name="${team}-players" class="selector-options" id="${type}-selector"></select>
+    <select name="${team}-players" class="selector-options" id="${type}-selector-${team}">
+      <option class="selector-options"></option>
+    </select>
   `;
-  const playerSelector = document.getElementById(`${type}-selector`);
-  players.forEach(player => {
+  const playerSelector = document.getElementById(`${type}-selector-${team}`);
+  const sortedPlayers = players.sort((a, b) => a.number - b.number);
+  console.log(sortedPlayers);
+
+  sortedPlayers.forEach(player => {
     if (player.teamId === team) {
       const playerOption = document.createElement('option');
       playerOption.textContent = `${player.number} - ${player.name}`;
-      playerOption.value = `${player.playerId}`;
+      playerOption.value = `${player.name}`;
+      playerOption.id = `${player.playerId}`;
       playerOption.setAttribute('class', 'selector-options');
       playerSelector.appendChild(playerOption);
     }
@@ -1033,7 +1033,6 @@ const appendPlayerSelector = function (el, team, type, typeUp) {
   newPlayerOption.value = 'new';
   playerSelector.appendChild(newPlayerOption);
   playerSelector.addEventListener('change', () => {
-    console.log(playerSelector.value);
     if (playerSelector.value === 'new') {
       el.innerHTML = `
       <input type="number" id="${type}-${team}-number" class="play-input__players--number" placeholder="#" required>
@@ -1049,6 +1048,7 @@ export const displayOffensePlayInput = function (team) {
   const playInputContainer = document.querySelector('.play-input');
 
   offensivePlayMarkup(playInputContainer, team);
+
   if (players.length !== 0) {
     const teamPasserInput = document.getElementById(`${team}-passer-input`);
     appendPlayerSelector(teamPasserInput, team, 'passer', 'Passer');
@@ -1057,6 +1057,7 @@ export const displayOffensePlayInput = function (team) {
     const teamRusherInput = document.getElementById(`${team}-rusher-input`);
     appendPlayerSelector(teamRusherInput, team, 'rusher', 'Rusher');
   }
+
   createCancel();
   renderLogo(team);
   appendOffenseBackgroundImages();
