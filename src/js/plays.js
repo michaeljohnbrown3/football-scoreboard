@@ -227,19 +227,23 @@ const updateScore = function (el, boxScore) {
 // Classes
 
 class Player {
-  constructor(name, team) {
+  constructor(name, number, team) {
     this.name = name;
-    this.comp = 0;
-    this.inc = 0;
-    this.att = 0;
-    this.trgt = 0;
-    this.rec = 0;
-    this.yards = 0;
-    this.longrec = 0;
-    this.td = 0;
-    this.int = 0;
-    this.id = `${team}-${name.split(' ').join('').toLowerCase()}`;
-    this.teamId = `${team}`;
+    this.number = number;
+    this.playerId = uuid();
+    this.passingYards = 0;
+    this.rushingYards = 0;
+    this.complete = 0;
+    this.incomplete = 0;
+    this.passAttempts = 0;
+    this.targets = 0;
+    this.receptions = 0;
+    this.longestPass = 0;
+    this.longestRush = 0;
+    this.passingTouchdowns = 0;
+    this.rushingTouchdowns = 0;
+    this.interceptions = 0;
+    this.teamId = team;
     this.plays = [];
   }
 }
@@ -307,6 +311,7 @@ const kickers = [];
 const punters = [];
 const defensiveReturners = [];
 const plays = [];
+const players = [];
 
 // Play results
 
@@ -487,10 +492,12 @@ const createPlay = function (team) {
 
   const passerNumber = document.getElementById(`passer-${team}-number`).value;
   const passer = document.getElementById(`passer-${team}`).value;
+
   const receiverNumber = document.getElementById(
     `receiver-${team}-number`
   ).value;
   const receiver = document.getElementById(`receiver-${team}`).value;
+
   const rusherNumber = document.getElementById(`rusher-${team}-number`).value;
   const rusher = document.getElementById(`rusher-${team}`).value;
 
@@ -542,6 +549,27 @@ const createPlay = function (team) {
 
   const teamId = team;
 
+  if (passer !== '') {
+    const newPasser = new Player(passer, passerNumber, teamId);
+    newPasser.plays.push(playId);
+    players.push(newPasser);
+    console.log(players);
+  }
+
+  if (receiver !== '') {
+    const newReceiver = new Player(receiver, receiverNumber, teamId);
+    newReceiver.plays.push(playId);
+    players.push(newReceiver);
+    console.log(players);
+  }
+
+  if (rusher !== '') {
+    const newRusher = new Player(rusher, rusherNumber, teamId);
+    newRusher.plays.push(playId);
+    players.push(newRusher);
+    console.log(players);
+  }
+
   const newPlay = new Play(
     playId,
     playType,
@@ -567,6 +595,7 @@ const createPlay = function (team) {
     interception,
     teamId
   );
+
   plays.push(newPlay);
   console.log(plays);
 
@@ -984,11 +1013,50 @@ const submitBtnAction = function (team) {
   });
 };
 
-export const displayPassPlayInput = function (team) {
+const appendPlayerSelector = function (el, team, type, typeUp) {
+  el.innerHTML = `
+    <select name="${team}-players" class="selector-options" id="${type}-selector"></select>
+  `;
+  const playerSelector = document.getElementById(`${type}-selector`);
+  players.forEach(player => {
+    if (player.teamId === team) {
+      const playerOption = document.createElement('option');
+      playerOption.textContent = `${player.number} - ${player.name}`;
+      playerOption.value = `${player.playerId}`;
+      playerOption.setAttribute('class', 'selector-options');
+      playerSelector.appendChild(playerOption);
+    }
+  });
+  const newPlayerOption = document.createElement('option');
+  newPlayerOption.textContent = `-- Add New Player --`;
+  newPlayerOption.setAttribute('class', 'selector-options');
+  newPlayerOption.value = 'new';
+  playerSelector.appendChild(newPlayerOption);
+  playerSelector.addEventListener('change', () => {
+    console.log(playerSelector.value);
+    if (playerSelector.value === 'new') {
+      el.innerHTML = `
+      <input type="number" id="${type}-${team}-number" class="play-input__players--number" placeholder="#" required>
+      <input type="text" id="${type}-${team}" class="play-input__players" placeholder="${typeUp}" required>
+      `;
+    }
+  });
+};
+
+export const displayOffensePlayInput = function (team) {
   playInputActions();
 
   const playInputContainer = document.querySelector('.play-input');
+
   offensivePlayMarkup(playInputContainer, team);
+  if (players.length !== 0) {
+    const teamPasserInput = document.getElementById(`${team}-passer-input`);
+    appendPlayerSelector(teamPasserInput, team, 'passer', 'Passer');
+    const teamReceiverInput = document.getElementById(`${team}-receiver-input`);
+    appendPlayerSelector(teamReceiverInput, team, 'receiver', 'Receiver');
+    const teamRusherInput = document.getElementById(`${team}-rusher-input`);
+    appendPlayerSelector(teamRusherInput, team, 'rusher', 'Rusher');
+  }
   createCancel();
   renderLogo(team);
   appendOffenseBackgroundImages();

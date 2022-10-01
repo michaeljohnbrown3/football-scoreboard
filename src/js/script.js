@@ -43,9 +43,9 @@ homePlaysBtn.addEventListener('click', () => {
 });
 
 awayPassBtn.addEventListener('click', () => {
-  plays.displayPassPlayInput(teamLoad.awayTeamId);
+  plays.displayOffensePlayInput(teamLoad.awayTeamId);
 });
 
 homePassBtn.addEventListener('click', () => {
-  plays.displayPassPlayInput(teamLoad.homeTeamId);
+  plays.displayOffensePlayInput(teamLoad.homeTeamId);
 });

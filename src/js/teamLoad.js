@@ -12,13 +12,15 @@ const blurBackground = document.querySelector('.blur-background');
 export const teamLoader = () => {
   teams.forEach(team => {
     const awayOption = document.createElement('option');
-    awayOption.textContent = `${team.name} ${team.nickname}`;
+    awayOption.innerHTML = `${team.name} ${team.nickname}`;
     awayOption.setAttribute('value', `${team.id}`);
+    awayOption.setAttribute('class', 'selector-options__option');
     awaySelector.appendChild(awayOption);
 
     const homeOption = document.createElement('option');
     homeOption.textContent = `${team.name} ${team.nickname}`;
     homeOption.setAttribute('value', `${team.id}`);
+    homeOption.setAttribute('class', 'selector-options__option');
     homeSelector.appendChild(homeOption);
   });
 };

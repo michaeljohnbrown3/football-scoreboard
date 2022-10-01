@@ -82,12 +82,12 @@ export const offensivePlayMarkup = function (el, team) {
       <div class="play-input__selectors--pass">
         <div class="play-input__pass-players">
           <label for="passer">Passer</label>
-          <div class="play-input__player-input">
+          <div class="play-input__player-input" id="${team}-passer-input">
             <input type="number" id="passer-${team}-number" class="play-input__players--number" placeholder="#" required>
             <input type="text" id="passer-${team}" class="play-input__players" placeholder="Passer" required>
           </div>
           <label for="receiver">Target</label>
-          <div class="play-input__player-input">
+          <div class="play-input__player-input" id="${team}-receiver-input">
             <input type="number" id="receiver-${team}-number" class="play-input__players--number" placeholder="#" required>
             <input type="text" id="receiver-${team}" class="play-input__players" placeholder="Target">
           </div>
@@ -140,7 +140,7 @@ export const offensivePlayMarkup = function (el, team) {
       <div class="play-input__selectors--rush">
         <div class="play-input__rush-players">
           <label for="rusher-${team}">Rusher</label>
-          <div class="play-input__player-input">
+          <div class="play-input__player-input" id="${team}-rusher-input">
             <input type="number" id="rusher-${team}-number" class="play-input__players--number" placeholder="#" required>
             <input type="text" id="rusher-${team}" class="play-input__players" placeholder="Rusher" required>
           </div>
