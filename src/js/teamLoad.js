@@ -9,6 +9,44 @@ const homeSelector = document.querySelector('#home');
 const teamSelector = document.querySelector('.team-select');
 const blurBackground = document.querySelector('.blur-background');
 
+export const teamStatsArr = [];
+
+class Team {
+  constructor(teamId) {
+    this.id = teamId;
+    this.q1Score = 0;
+    this.q2Score = 0;
+    this.q3Score = 0;
+    this.q4Score = 0;
+    this.q5Score = 0;
+    this.totalScore = 0;
+    this.firstDowns = 0;
+    this.totalYards = 0;
+    this.totalPlays = 0;
+    this.yardsPerPlay = 0;
+    this.passingYards = 0;
+    this.completions = 0;
+    this.passingAttempts = 0;
+    this.yardsPerPass = 0;
+    this.rushingYards = 0;
+    this.rushingAttempts = 0;
+    this.yardsPerRush = 0;
+    this.penalties = 0;
+    this.penaltyYards = 0;
+    this.turnovers = 0;
+  }
+
+  scoreSum() {
+    return (
+      this.q1Score + this.q2Score + this.q3Score + this.q4Score + this.q5Score
+    );
+  }
+
+  perPlayCalc(yards, attempts) {
+    return Math.round((yards / attempts) * 10) / 10;
+  }
+}
+
 export const teamLoader = () => {
   teams.forEach(team => {
     const awayOption = document.createElement('option');
@@ -101,6 +139,8 @@ export const kickoffInit = () => {
 
   teams.forEach(team => {
     if (awaySelected === team.id) {
+      const awayTeam = new Team(awaySelected);
+      teamStatsArr.push(awayTeam);
       const awayPlayerStats = document.querySelector('.away-stats');
       const awayTeamStats = document.querySelector('.team-stats__away');
       awayTeamStats.setAttribute('id', `${awaySelected}-team-stats`);
@@ -124,6 +164,8 @@ export const kickoffInit = () => {
       setPlaysContainerId(team.id, awayPlaysContainers);
     }
     if (homeSelected === team.id) {
+      const homeTeam = new Team(homeSelected);
+      teamStatsArr.push(homeTeam);
       const homePlayerStats = document.querySelector('.home-stats');
       const homeTeamStats = document.querySelector('.team-stats__home');
       homeTeamStats.setAttribute('id', `${homeSelected}-team-stats`);

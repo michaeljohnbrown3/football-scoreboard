@@ -5,6 +5,7 @@ import { TeamStats } from './teamStats';
 import * as boxScore from './boxScore';
 import * as teamStatsContainer from './teamStatsContainer';
 import * as boxScoreContainer from './boxScoreContainer';
+import * as teamLoader from './teamLoad';
 
 export const displayPlays = function (container) {
   container.style.height = 'calc(100vh - 16.8rem)';
@@ -226,39 +227,39 @@ const updateScore = function (el, boxScore) {
 
 // Classes
 
-class Team {
-  constructor(teamId) {
-    this.id = teamId;
-    this.q1Score = 0;
-    this.q2Score = 0;
-    this.q3Score = 0;
-    this.q4Score = 0;
-    this.q5Score = 0;
-    this.totalScore = 0;
-    this.firstDowns = 0;
-    this.totalPlays = 0;
-    this.yardsPerPlay = 0;
-    this.passingYards = 0;
-    this.completions = 0;
-    this.passingAttempts = 0;
-    this.yardsPerPass = 0;
-    this.rushingYards = 0;
-    this.yardsPerRush = 0;
-    this.penalties = 0;
-    this.penaltyYards = 0;
-    this.turnovers = 0;
-  }
+// class Team {
+//   constructor(teamId) {
+//     this.id = teamId;
+//     this.q1Score = 0;
+//     this.q2Score = 0;
+//     this.q3Score = 0;
+//     this.q4Score = 0;
+//     this.q5Score = 0;
+//     this.totalScore = 0;
+//     this.firstDowns = 0;
+//     this.totalPlays = 0;
+//     this.yardsPerPlay = 0;
+//     this.passingYards = 0;
+//     this.completions = 0;
+//     this.passingAttempts = 0;
+//     this.yardsPerPass = 0;
+//     this.rushingYards = 0;
+//     this.yardsPerRush = 0;
+//     this.penalties = 0;
+//     this.penaltyYards = 0;
+//     this.turnovers = 0;
+//   }
 
-  scoreSum() {
-    return (
-      this.q1Score + this.q2Score + this.q3Score + this.q4Score + this.q5Score
-    );
-  }
+//   scoreSum() {
+//     return (
+//       this.q1Score + this.q2Score + this.q3Score + this.q4Score + this.q5Score
+//     );
+//   }
 
-  perPlayCalc(yards, attempts) {
-    return Math.round((yards / attempts) * 10) / 10;
-  }
-}
+//   perPlayCalc(yards, attempts) {
+//     return Math.round((yards / attempts) * 10) / 10;
+//   }
+// }
 
 class Player {
   constructor(name, number, team) {
@@ -336,7 +337,7 @@ class Play {
 
 const plays = [];
 const players = [];
-const teams = [];
+const teams = teamLoader.teamStatsArr;
 
 // Play results
 /*
@@ -650,27 +651,34 @@ const createPlay = function (team) {
   );
   plays.push(newPlay);
 
+  if (teams.length === 2) {
+    console.log('both teams set');
+  }
+
+  if (teams.length === 1) {
+    teams.forEach(team => {
+      if (team.id !== teamId) {
+        console.log('Team 2');
+        const newerTeam = new Team(teamId);
+        teams.push(newerTeam);
+      }
+      if (team.id === teamId) {
+        console.log('Team exists');
+      }
+    });
+  }
+  // if (team.id === teamId) {
+  //   console.log('Team 1');
+  // }
+
   if (teams.length === 0) {
+    console.log('Team 1');
     const newTeam = new Team(teamId);
     teams.push(newTeam);
   }
 
-  if (teams.length !== 0) {
-    teams.forEach(team => {
-      console.log(team.id);
-      console.log(teamId);
-      if (team.id === teamId) {
-        return;
-      }
-      if (team.id !== teamId) {
-        const newTeam = new Team(teamId);
-        teams.push(newTeam);
-      }
-    });
-  }
-
-  console.log(plays);
-  console.log(players);
+  // console.log(plays);
+  // console.log(players);
   console.log(teams);
 
   const selectedPlayer = function () {
@@ -723,10 +731,37 @@ const createPlay = function (team) {
     });
   };
 
+  const updateTeamStats = function () {
+    teams.forEach(team => {
+      if (team.id === teamId) {
+        team.firstDowns += passingFirstDown + rushingFirstDown;
+        team.totalYards += passingYards + rushingYards;
+        team.totalPlays += complete + incomplete + rushingAttempts;
+        team.yardsPerPlay = perPlayCalc(team.totalYards, team.totalPlays);
+        team.passingYards += passingYards;
+        team.completions += complete;
+        team.passingAttempts += complete + incomplete;
+        team.yardsPerPass = perPlayCalc(
+          team.passingYards,
+          team.passingAttempts
+        );
+        team.rushingYards += rushingYards;
+        team.rushingAttempts += rushingAttempts;
+        team.yardsPerRush = perPlayCalc(
+          team.rushingYards,
+          team.rushingAttempts
+        );
+        team.turnovers += interception + passingFumbleLost + rushingFumbleLost;
+      }
+    });
+  };
+
+  /////////////// Define variables for team stats!!!
+
   const updateRushingStats = function () {
     players.forEach(player => {
       if (player.playerId === selectedRusher) {
-        player.rushingYards = newPlay.rushingYards;
+        player.rushingYards += newPlay.rushingYards;
         player.rushAttempts += 1;
         player.longestRush = 'tbd';
         player.rushingTouchdowns += newPlay.rushingTouchdown;
@@ -737,7 +772,8 @@ const createPlay = function (team) {
   updatePassingStats();
   updateReceivingStats();
   updateRushingStats();
-  console.log(players);
+  updateTeamStats();
+  // console.log(players);
 
   /*
   const teamStatAlt = teamStatsContainer.teamStats.find(
@@ -1188,6 +1224,7 @@ const appendPlayerSelector = function (el, team, type, typeUp) {
 
 export const displayOffensePlayInput = function (team) {
   playInputActions();
+  console.log(teams);
 
   const playInputContainer = document.querySelector('.play-input');
 
