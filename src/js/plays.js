@@ -10,6 +10,17 @@ import { updateTeamStatDisplay } from './teamStatsContainer';
 import { updatePlayerStats } from './classesjs/player';
 import { Player } from './classesjs/player';
 import { Play } from './classesjs/play';
+import {
+  appendPasserStats,
+  appendReceiverStats,
+  appendRusherStats,
+  updatePasserStats,
+  updateReceiverStats,
+  updateRusherStats,
+  updateTotalPasserStats,
+  updateTotalReceivingStats,
+  updateTotalRushingStats,
+} from './playerStatsContainer';
 
 export const displayPlays = function (container) {
   container.style.height = 'calc(100vh - 16.8rem)';
@@ -447,7 +458,12 @@ const createPlay = function (team) {
 const submitBtnAction = function (team) {
   const submitBtn = document.querySelector('.play-input__submit');
   const teamStatContainer = document.getElementById(`${team}-team-stats`);
+  const passerStatContainer = document.getElementById(`${team}-passers`);
+  const rushingStatContainer = document.getElementById(`${team}-rushers`);
+  const receivingStatContainer = document.getElementById(`${team}-receivers`);
+
   let selectedTeam;
+
   teams.forEach(tm => {
     if (tm.id === team) {
       selectedTeam = tm;
@@ -462,6 +478,44 @@ const submitBtnAction = function (team) {
     updateTeamStats(teams, plays);
     updateTeamStatDisplay(teamStatContainer, team, selectedTeam);
     boxScoreContainer.updateBoxScoreDisplay(team, selectedTeam);
+
+    players.forEach(player => {
+      console.log(player);
+      if (player.teamId === team) {
+        const passerEl = document.getElementById(`${player.playerId}-passing`);
+        const rusherEl = document.getElementById(`${player.playerId}-rushing`);
+        const receivingEl = document.getElementById(
+          `${player.playerId}-receiving`
+        );
+
+        // passerStatContainer.innerHTML = '';
+        // rushingStatContainer.innerHTML = '';
+        // receivingStatContainer.innerHTML = '';
+
+        if (player.passAttempts == 1 && passerEl === null) {
+          appendPasserStats(passerStatContainer, player);
+        }
+        if (player.passAttempts > 1) {
+          updatePasserStats(player);
+        }
+        if (player.rushingAttempts == 1 && rusherEl === null) {
+          appendRusherStats(rushingStatContainer, player);
+        }
+        if (player.rushingAttempts > 1) {
+          updateRusherStats(player);
+        }
+        if (player.targets == 1 && receivingEl === null) {
+          appendReceiverStats(receivingStatContainer, player);
+        }
+        if (player.targets > 1) {
+          updateReceiverStats(player);
+        }
+      }
+    });
+
+    updateTotalPasserStats(selectedTeam);
+    updateTotalRushingStats(selectedTeam);
+    updateTotalReceivingStats(selectedTeam);
   });
 };
 

@@ -21,6 +21,10 @@ export class Team {
     this.penalties = 0;
     this.penaltyYards = 0;
     this.turnovers = 0;
+    this.passingTouchdowns = 0;
+    this.interceptions = 0;
+    this.rushingTouchdowns = 0;
+    this.receivingTouchdowns = 0;
   }
 
   scoreSum() {
@@ -56,6 +60,11 @@ export const updateTeamStats = function (teamsArr, playsArr) {
     team.yardsPerPass = 0;
     team.yardsPerPlay = 0;
     team.yardsPerRush = 0;
+    team.yardsPerReception = 0;
+    team.passingTouchdowns = 0;
+    team.interceptions = 0;
+    team.rushingTouchdowns = 0;
+    team.receivingTouchdowns = 0;
 
     playsArr.forEach(play => {
       if (team.id === play.team) {
@@ -83,9 +92,22 @@ export const updateTeamStats = function (teamsArr, playsArr) {
         team.totalYards += play.passingYards + play.rushingYards;
         team.turnovers +=
           play.interception + play.passingFumbleLost + play.rushingFumbleLost;
-        team.yardsPerPass = team.passingYards / team.passingAttempts;
-        team.yardsPerPlay = team.totalYards / team.totalPlays;
-        team.yardsPerRush = team.rushingYards / team.rushingAttempts;
+        team.yardsPerPass = isNaN(team.passingYards / team.passingAttempts)
+          ? 0
+          : team.passingYards / team.passingAttempts;
+        team.yardsPerPlay = isNaN(team.totalYards / team.totalPlays)
+          ? 0
+          : team.totalYards / team.totalPlays;
+        team.yardsPerRush = isNaN(team.rushingYards / team.rushingAttempts)
+          ? 0
+          : team.rushingYards / team.rushingAttempts;
+        team.yardsPerReception = isNaN(team.passingYards / team.completions)
+          ? 0
+          : team.passingYards / team.completions;
+        team.passingTouchdowns += play.passingTouchdown;
+        team.interceptions += play.interception;
+        team.rushingTouchdowns += play.rushingTouchdown;
+        team.receivingTouchdowns += play.passingTouchdown;
       }
     });
   });

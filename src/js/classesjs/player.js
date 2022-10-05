@@ -21,6 +21,9 @@ export class Player {
     this.rushingTouchdowns = 0;
     this.receivingTouchdowns = 0;
     this.interceptions = 0;
+    this.yardsPerPass = 0;
+    this.yardsPerRush = 0;
+    this.yardsPerReception = 0;
     this.teamId = team;
     this.plays = [];
   }
@@ -36,6 +39,7 @@ export const updatePlayerStats = function (playersArr, playsArr) {
       player.longestPass = 'tbd';
       player.passingTouchdowns = 0;
       player.interceptions = 0;
+      player.yardsPerPass = 0;
       playsArr.forEach(play => {
         if (player.playerId === play.passerId) {
           player.completions += play.complete;
@@ -45,6 +49,8 @@ export const updatePlayerStats = function (playersArr, playsArr) {
           player.longestPass = 'tbd';
           player.passingTouchdowns += play.passingTouchdown;
           player.interceptions += play.interception;
+          player.yardsPerPass =
+            Math.round((player.passingYards / player.passAttempts) * 10) / 10;
         }
       });
     });
@@ -57,6 +63,7 @@ export const updatePlayerStats = function (playersArr, playsArr) {
       player.receivingYards = 0;
       player.longestReception = 'tbd';
       player.receivingTouchdowns = 0;
+      player.yardsPerReception = 0;
       playsArr.forEach(play => {
         if (player.playerId === play.receiverId) {
           player.receptions += play.complete;
@@ -64,6 +71,11 @@ export const updatePlayerStats = function (playersArr, playsArr) {
           player.receivingYards += play.passingYards;
           player.longestReception = 'tbd';
           player.receivingTouchdowns += play.passingTouchdown;
+          player.yardsPerReception = isNaN(
+            player.receivingYards / player.receptions
+          )
+            ? 0
+            : Math.round((player.receivingYards / player.receptions) * 10) / 10;
         }
       });
     });
@@ -75,12 +87,16 @@ export const updatePlayerStats = function (playersArr, playsArr) {
       player.rushingAttempts = 0;
       player.longestRush = 'tbd';
       player.rushingTouchdowns = 0;
+      player.yardsPerRush = 0;
       playsArr.forEach(play => {
         if (player.playerId === play.rusherId) {
           player.rushingYards += play.rushingYards;
           player.rushingAttempts += play.rushingAttempt;
           player.longestRush = 'tbd';
           player.rushingTouchdowns += play.rushingTouchdown;
+          player.yardsPerRush =
+            Math.round((player.rushingYards / player.rushingAttempts) * 10) /
+            10;
         }
       });
     });
