@@ -57,3 +57,9 @@
 .stat-line-header {
   padding: 0 1rem;
 }
+
+.stat-line {
+  &__name {
+    width: 13rem;
+  }
+}

@@ -13,7 +13,7 @@ export const appendStatSheet = function (el, adv, team) {
             </tr>
             <tr class="stat-line"></tr>
             <tr class="stat-line__total" id="${team}-passer-totals">
-              <th>Total</th>
+              <th class="stat-line__name">No Passers</th>
               <th class="${adv}-total-completions">0/0</th>
               <th class="${adv}-total-pass-yards">0</th>
               <th class="${adv}-total-pass-average">0.0</th>
@@ -35,7 +35,7 @@ export const appendStatSheet = function (el, adv, team) {
             </tr>
             <tr class="stat-line" id="${team}-rushers></tr>
             <tr class="stat-line__total" id="${team}-rusher-totals">
-              <th>Total</th>
+              <th class="stat-line__name">No Rushers</th>
               <th class="${adv}-total-carries">0</th>
               <th class="${adv}-total-rush-yards">0</th>
               <th class="${adv}-total-rush-average">0.0</th>
@@ -58,7 +58,7 @@ export const appendStatSheet = function (el, adv, team) {
             </tr>
             <tr class="stat-line"></tr>
             <tr class="stat-line__total" id="${team}-receiving-totals">
-              <th>Total</th>
+              <th class="stat-line__name">No Receivers</th>
               <th>0</th>
               <th>0</th>
               <th>0.0</th>
@@ -81,7 +81,7 @@ export const appendStatSheet = function (el, adv, team) {
             </tr>
             <tr class="stat-line" id="${team}-kick-returners></tr>
             <tr class="stat-line__total">
-            <th>Total</th>
+            <th class="stat-line__name">No Kick Returners</th>
             <th>0</th>
             <th>0</th>
             <th>0.0</th>
@@ -103,7 +103,7 @@ export const appendStatSheet = function (el, adv, team) {
             </tr>
             <tr class="stat-line" id="${team}-punt-returners></tr>
             <tr class="stat-line__total">
-            <th>Total</th>
+            <th class="stat-line__name">No Punt Returners</th>
             <th>0</th>
             <th>0</th>
             <th>0.0</th>
@@ -125,7 +125,7 @@ export const appendStatSheet = function (el, adv, team) {
             </tr>
             <tr class="stat-line" id="${team}-kickers></tr>
             <tr class="stat-line__total">
-            <th>Total</th>
+            <th class="stat-line__name">No Kickers</th>
             <th>0/0</th>
             <th>0.0%</th>
             <th>0</th>
@@ -134,5 +134,11 @@ export const appendStatSheet = function (el, adv, team) {
           </tr>
           </table>
         </div>
+  `;
+};
+
+const appendPasserStat = function (el, passer) {
+  el.innerHTML = `
+  
   `;
 };

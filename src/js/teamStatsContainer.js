@@ -106,3 +106,75 @@ export const appendTeamStats = function (el, team) {
 
   teamStats.push(teamStatObj);
 };
+
+export const updateTeamStatDisplay = function (el, team, teamObj) {
+  el.innerHTML = `
+  <tr>
+    <th class="team-stats__cell" id="${team}-first-downs">${
+    teamObj.firstDowns
+  }</th>
+  </tr>
+  <tr>
+    <th class="team-stats__cell" id="${team}-total-yards">${
+    teamObj.totalYards
+  }</th>
+  </tr>
+  <tr>
+    <td class="team-stats__cell" id="${team}-total-plays">${
+    teamObj.totalPlays
+  }</td>
+  </tr>
+  <tr>
+    <td class="team-stats__cell" id="${team}-yards-play">${
+    isNaN(teamObj.yardsPerPlay)
+      ? '0.0'
+      : Math.round(teamObj.yardsPerPlay * 10) / 10
+  }</td>
+  </tr>
+  <tr>
+    <th class="team-stats__cell" id="${team}-passing-yards">${
+    teamObj.passingYards
+  }</th>
+  </tr>
+  <tr>
+    <td class="team-stats__cell" id="${team}-comp-att">${teamObj.completions}/${
+    teamObj.passingAttempts
+  }</td>
+  </tr>
+  <tr>
+    <td class="team-stats__cell" id="${team}-yards-pass">${
+    isNaN(teamObj.yardsPerPass)
+      ? '0.0'
+      : Math.round(teamObj.yardsPerPass * 10) / 10
+  }</td>
+  </tr>
+  <tr>
+    <th class="team-stats__cell" id="${team}-rushing-yards">${
+    teamObj.rushingYards
+  }</th>
+  </tr>
+  <tr>
+    <td class="team-stats__cell" id="${team}-rushes">${
+    teamObj.rushingAttempts
+  }</td>
+  </tr>
+  <tr>
+    <td class="team-stats__cell" id="${team}-yards-rush">${
+    isNaN(teamObj.yardsPerRush)
+      ? '0.0'
+      : Math.round(teamObj.yardsPerRush * 10) / 10
+  }</td>
+  </tr>
+  <tr>
+    <th class="team-stats__cell" id="${team}-penalties">${teamObj.penalties}-${
+    teamObj.penaltyYards
+  }</th>
+  </tr>
+  <tr>
+    <th class="team-stats__cell" id="${team}-turnovers">${
+    teamObj.turnovers
+  }</th>
+  </tr>
+  </div>
+  `;
+};

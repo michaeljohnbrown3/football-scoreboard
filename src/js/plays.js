@@ -1,11 +1,15 @@
 import { v4 as uuid } from 'uuid';
 import { passPlayMarkup } from './inputMarkupjs/passPlayMarkup';
 import { offensivePlayMarkup } from './inputMarkupjs/passPlayMarkup';
-import { TeamStats } from './teamStats';
 import * as boxScore from './boxScore';
 import * as teamStatsContainer from './teamStatsContainer';
 import * as boxScoreContainer from './boxScoreContainer';
 import * as teamLoader from './teamLoad';
+import { updateTeamStats } from './classesjs/team';
+import { updateTeamStatDisplay } from './teamStatsContainer';
+import { updatePlayerStats } from './classesjs/player';
+import { Player } from './classesjs/player';
+import { Play } from './classesjs/play';
 
 export const displayPlays = function (container) {
   container.style.height = 'calc(100vh - 16.8rem)';
@@ -72,7 +76,7 @@ const playInputActionsRemove = function () {
 const calcAvg = function (yards, denom) {
   return isNaN(yards / denom) ? 0 : Math.round((yards / denom) * 10) / 10;
 };
-
+/*
 const appendPassStats = function (el, stats, team, id) {
   el.insertAdjacentHTML(
     'beforebegin',
@@ -152,7 +156,7 @@ const updateTotalRecStats = function (el, stats) {
   <th class="stat-line">${stats.longrec}</th>
   `;
 };
-
+*/
 /*
 const updateTeamStats = function (el, stats, team) {
   el.innerHTML = `
@@ -217,7 +221,7 @@ const updateTeamStats = function (el, stats, team) {
   `;
 };
 */
-
+/*
 const updateBoxScore = function (team, qtr, score) {
   const quarterScore = document.getElementById(`${team}-${qtr}`);
   quarterScore.textContent = `${score[qtr]}`;
@@ -226,132 +230,8 @@ const updateBoxScore = function (team, qtr, score) {
 const updateScore = function (el, boxScore) {
   el.textContent = `${boxScore.calcScore()}`;
 };
-
+*/
 // Classes
-
-// class Team {
-//   constructor(teamId) {
-//     this.id = teamId;
-//     this.q1Score = 0;
-//     this.q2Score = 0;
-//     this.q3Score = 0;
-//     this.q4Score = 0;
-//     this.q5Score = 0;
-//     this.totalScore = 0;
-//     this.firstDowns = 0;
-//     this.totalPlays = 0;
-//     this.yardsPerPlay = 0;
-//     this.passingYards = 0;
-//     this.completions = 0;
-//     this.passingAttempts = 0;
-//     this.yardsPerPass = 0;
-//     this.rushingYards = 0;
-//     this.yardsPerRush = 0;
-//     this.penalties = 0;
-//     this.penaltyYards = 0;
-//     this.turnovers = 0;
-//   }
-
-//   scoreSum() {
-//     return (
-//       this.q1Score + this.q2Score + this.q3Score + this.q4Score + this.q5Score
-//     );
-//   }
-
-//   perPlayCalc(yards, attempts) {
-//     return Math.round((yards / attempts) * 10) / 10;
-//   }
-// }
-
-class Player {
-  constructor(name, number, team) {
-    this.name = name;
-    this.number = number * 1;
-    this.playerId = uuid();
-    this.passingYards = 0;
-    this.rushingYards = 0;
-    this.receivingYards = 0;
-    this.completions = 0;
-    this.incompletions = 0;
-    this.passAttempts = 0;
-    this.rushingAttempts = 0;
-    this.targets = 0;
-    this.receptions = 0;
-    this.longestPass = 0;
-    this.longestRush = 0;
-    this.longestReception = 0;
-    this.passingTouchdowns = 0;
-    this.rushingTouchdowns = 0;
-    this.receivingTouchdowns = 0;
-    this.interceptions = 0;
-    this.teamId = team;
-    this.plays = [];
-  }
-}
-
-class Play {
-  constructor(
-    playId,
-    playType,
-    quarter,
-    passName,
-    recName,
-    rushName,
-    passYards,
-    rushYards,
-    comp,
-    inc,
-    passTd,
-    rushTd,
-    passFirstDown,
-    rushFirstDown,
-    passFumbleLost,
-    rushFumbleLost,
-    passSafety,
-    rushSafety,
-    int,
-    teamId,
-    passerId,
-    receiverId,
-    rusherId,
-    rushes,
-    q1Score,
-    q2Score,
-    q3Score,
-    q4Score,
-    q5Score
-  ) {
-    this.playId = playId;
-    this.playType = playType;
-    this.quarter = quarter;
-    this.passer = passName;
-    this.receiver = recName;
-    this.rusher = rushName;
-    this.passingYards = passYards * 1;
-    this.rushingYards = rushYards * 1;
-    this.complete = comp;
-    this.incomplete = inc;
-    this.passingTouchdown = passTd;
-    this.rushingTouchdown = rushTd;
-    this.passingFirstDown = passFirstDown;
-    this.rushingFirstDown = rushFirstDown;
-    this.passingFumbleLost = passFumbleLost;
-    this.rushingFumbleLost = rushFumbleLost;
-    this.passingSafety = passSafety;
-    this.rushingSafety = rushSafety;
-    this.interception = int;
-    this.team = teamId;
-    this.passerId = passerId;
-    this.receiverId = receiverId;
-    this.rusherId = rusherId;
-    this.rushingAttempt = rushes;
-    this.q1Score = q1Score;
-    this.q2Score = q2Score;
-    this.q3Score = q3Score;
-    this.q4Score = q4Score;
-    this.q5Score = q5Score;
-  }
-}
 
 // Data storage
 
@@ -367,33 +247,8 @@ const createPlay = function (team) {
   const playsEl = document.getElementById(`${team}-plays-container`);
   const teamScoreEl = document.getElementById(`${team}-score`);
   */
-
-  let rushingAttempt = 0;
-  let q1Score = 0;
-  let q2Score = 0;
-  let q3Score = 0;
-  let q4Score = 0;
-  let q5Score = 0;
-
-  const playTypeDefine = function () {
-    if (document.getElementById(`${team}-pass-input`).checked) {
-      rushingAttempt = 0;
-      return 'pass';
-    }
-    if (document.getElementById(`${team}-rush-input`).checked) {
-      rushingAttempt = 1;
-      return 'rush';
-    }
-  };
-
-  const convertCheckedToValue = function (input) {
-    return input ? 1 : 0;
-  };
-
   const playId = uuid();
-  const playType = playTypeDefine();
   const quarter = document.querySelector(`.header__quarter`).dataset.quarter;
-
   const passerSelector = document.getElementById(`passer-selector-${team}`);
   const passerName = document.getElementById(`passer-${team}`);
   const passerNumber = document.getElementById(`passer-${team}-number`);
@@ -404,47 +259,9 @@ const createPlay = function (team) {
   const rusherName = document.getElementById(`rusher-${team}`);
   const rusherNumber = document.getElementById(`rusher-${team}-number`);
 
-  const nameFunction = function (selector, number, name) {
-    if (selector !== null) {
-      let playerName;
-      players.forEach(player => {
-        if (player.playerId === selector.value) {
-          playerName = player.name;
-          player.plays.push(playId);
-        }
-      });
-      return playerName;
-    }
-    if (number !== null && name !== null) {
-      return name.value;
-    }
+  const convertCheckedToValue = function (input) {
+    return input ? 1 : 0;
   };
-
-  const selectedPlayerFunction = function (selector, number, name) {
-    if (selector !== null) {
-      let playerId;
-      players.forEach(player => {
-        if (player.playerId === selector.value) {
-          playerId = player.playerId;
-        }
-      });
-      return playerId;
-    }
-    if (number !== null && name !== null) {
-      let playerId;
-      players.forEach(player => {
-        if (player.name === name.value) {
-          playerId = player.playerId;
-        }
-      });
-      return playerId;
-    }
-  };
-
-  const passer = nameFunction(passerSelector, passerNumber, passerName);
-  const receiver = nameFunction(receiverSelector, receiverNumber, receiverName);
-  const rusher = nameFunction(rusherSelector, rusherNumber, rusherName);
-
   const passingYards = document.getElementById(
     `${team}-passing-yards-gained`
   ).value;
@@ -486,6 +303,65 @@ const createPlay = function (team) {
   );
   const teamId = team;
 
+  let rushingAttempt = 0;
+  let q1Score = 0;
+  let q2Score = 0;
+  let q3Score = 0;
+  let q4Score = 0;
+  let q5Score = 0;
+
+  const playTypeDefine = function () {
+    if (document.getElementById(`${team}-pass-input`).checked) {
+      rushingAttempt = 0;
+      return 'pass';
+    }
+    if (document.getElementById(`${team}-rush-input`).checked) {
+      rushingAttempt = 1;
+      return 'rush';
+    }
+  };
+  const playType = playTypeDefine();
+
+  const nameFunction = function (selector, number, name) {
+    if (selector !== null) {
+      let playerName;
+      players.forEach(player => {
+        if (player.playerId === selector.value) {
+          playerName = player.name;
+          player.plays.push(playId);
+        }
+      });
+      return playerName;
+    }
+    if (number !== null && name !== null) {
+      return name.value;
+    }
+  };
+  const passer = nameFunction(passerSelector, passerNumber, passerName);
+  const receiver = nameFunction(receiverSelector, receiverNumber, receiverName);
+  const rusher = nameFunction(rusherSelector, rusherNumber, rusherName);
+
+  const selectedPlayerFunction = function (selector, number, name) {
+    if (selector !== null) {
+      let playerId;
+      players.forEach(player => {
+        if (player.playerId === selector.value) {
+          playerId = player.playerId;
+        }
+      });
+      return playerId;
+    }
+    if (number !== null && name !== null) {
+      let playerId;
+      players.forEach(player => {
+        if (player.name === name.value) {
+          playerId = player.playerId;
+        }
+      });
+      return playerId;
+    }
+  };
+
   if (passingTouchdown === 1 || rushingTouchdown === 1) {
     if (quarter === 'q1') q1Score = 6;
     if (quarter === 'q2') q2Score = 6;
@@ -493,8 +369,6 @@ const createPlay = function (team) {
     if (quarter === 'q4') q4Score = 6;
     if (quarter === 'q5') q5Score = 6;
   }
-
-  console.log(q2Score);
 
   if (passerName !== null && passerName.value !== '') {
     const newPasser = new Player(passer, passerNumber.value, teamId);
@@ -513,12 +387,6 @@ const createPlay = function (team) {
     newRusher.plays.push(playId);
     players.push(newRusher);
   }
-
-  const selectedPlayer = function () {
-    if (passerSelector !== null) {
-      return;
-    }
-  };
 
   const selectedPasser = selectedPlayerFunction(
     passerSelector,
@@ -576,139 +444,24 @@ const createPlay = function (team) {
   console.log(teams);
 };
 
-const updatePlayerStats = function () {
-  const updatePassingStats = function () {
-    players.forEach(player => {
-      player.completions = 0;
-      player.incompletions = 0;
-      player.passAttempts = 0;
-      player.passingYards = 0;
-      player.longestPass = 'tbd';
-      player.passingTouchdowns = 0;
-      player.interceptions = 0;
-      plays.forEach(play => {
-        if (player.playerId === play.passerId) {
-          player.completions += play.complete;
-          player.incompletions += play.incomplete;
-          player.passAttempts += play.complete + play.incomplete;
-          player.passingYards += play.passingYards;
-          player.longestPass = 'tbd';
-          player.passingTouchdowns += play.passingTouchdown;
-          player.interceptions += play.interception;
-        }
-      });
-    });
-  };
-
-  const updateReceivingStats = function () {
-    players.forEach(player => {
-      player.receptions = 0;
-      player.targets = 0;
-      player.receivingYards = 0;
-      player.longestReception = 'tbd';
-      player.receivingTouchdowns = 0;
-      plays.forEach(play => {
-        if (player.playerId === play.receiverId) {
-          player.receptions += play.complete;
-          player.targets += play.complete + play.incomplete;
-          player.receivingYards += play.passingYards;
-          player.longestReception = 'tbd';
-          player.receivingTouchdowns += play.passingTouchdown;
-        }
-      });
-    });
-  };
-
-  const updateRushingStats = function () {
-    players.forEach(player => {
-      player.rushingYards = 0;
-      player.rushingAttempts = 0;
-      player.longestRush = 'tbd';
-      player.rushingTouchdowns = 0;
-      plays.forEach(play => {
-        if (player.playerId === play.rusherId) {
-          player.rushingYards += play.rushingYards;
-          player.rushingAttempts += play.rushingAttempt;
-          player.longestRush = 'tbd';
-          player.rushingTouchdowns += play.rushingTouchdown;
-        }
-      });
-    });
-  };
-
-  updatePassingStats();
-  updateReceivingStats();
-  updateRushingStats();
-};
-
-const updateTeamStats = function () {
-  teams.forEach(team => {
-    team.completions = 0;
-    team.firstDowns = 0;
-    team.passingAttempts = 0;
-    team.passingYards = 0;
-    team.penalties = 0;
-    team.penaltyYards = 0;
-    team.q1Score = 0;
-    team.q2Score = 0;
-    team.q3Score = 0;
-    team.q4Score = 0;
-    team.q5Score = 0;
-    team.rushingAttempts = 0;
-    team.rushingYards = 0;
-    team.totalPlays = 0;
-    team.totalScore = 0;
-    team.totalYards = 0;
-    team.turnovers = 0;
-    team.yardsPerPass = 0;
-    team.yardsPerPlay = 0;
-    team.yardsPerRush = 0;
-
-    plays.forEach(play => {
-      console.log(play.team);
-      if (team.id === play.team) {
-        team.completions += play.complete;
-        team.firstDowns += play.passingFirstDown + play.rushingFirstDown;
-        team.passingAttempts += play.complete + play.incomplete;
-        team.passingYards += play.passingYards;
-        team.penalties += 0;
-        team.penaltyYards += 0;
-        team.q1Score += play.q1Score;
-        team.q2Score += play.q2Score;
-        team.q3Score += play.q3Score;
-        team.q4Score += play.q4Score;
-        team.q5Score += play.q5Score;
-        team.rushingAttempts += play.rushingAttempt;
-        team.rushingYards += play.rushingYards;
-        team.totalPlays +=
-          play.complete + play.incomplete + play.rushingAttempt;
-        team.totalScore =
-          team.q1Score +
-          team.q2Score +
-          team.q3Score +
-          team.q4Score +
-          team.q5Score;
-        team.totalYards += play.passingYards + play.rushingYards;
-        team.turnovers +=
-          play.interception + play.passingFumbleLost + play.rushingFumbleLost;
-        team.yardsPerPass = team.passingYards / team.passingAttempts;
-        team.yardsPerPlay = team.totalYards / team.totalPlays;
-        team.yardsPerRush = team.rushingYards / team.rushingAttempts;
-      }
-    });
-  });
-};
-
-/////////////// Append stats arrays to proper DOM location
-
 const submitBtnAction = function (team) {
   const submitBtn = document.querySelector('.play-input__submit');
+  const teamStatContainer = document.getElementById(`${team}-team-stats`);
+  let selectedTeam;
+  teams.forEach(tm => {
+    if (tm.id === team) {
+      selectedTeam = tm;
+    }
+  });
+
   submitBtn.addEventListener('click', e => {
     e.preventDefault();
     playInputActionsRemove();
     createPlay(team);
-    updatePlayerStats();
-    updateTeamStats();
+    updatePlayerStats(players, plays);
+    updateTeamStats(teams, plays);
+    updateTeamStatDisplay(teamStatContainer, team, selectedTeam);
+    boxScoreContainer.updateBoxScoreDisplay(team, selectedTeam);
   });
 };
 

@@ -2,7 +2,6 @@ import './../sass/main.scss';
 import * as teamLoad from './teamLoad';
 import * as boxScore from './boxScore';
 import * as playerStatsContainer from './playerStatsContainer';
-import * as teamStats from './teamStats';
 import * as plays from './plays';
 import * as playerStats from './playerStats';
 

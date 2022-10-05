@@ -27,3 +27,18 @@ export const appendBoxScore = function (el, adv, team) {
   `;
   boxScoresArr.push(newBoxScoreObj);
 };
+
+export const updateBoxScoreDisplay = function (team, teamStat) {
+  const score = document.getElementById(`${team}-score`);
+  const quarterOne = document.getElementById(`${team}-q1`);
+  const quarterTwo = document.getElementById(`${team}-q2`);
+  const quarterThree = document.getElementById(`${team}-q3`);
+  const quarterFour = document.getElementById(`${team}-q4`);
+  const quarterOt = document.getElementById(`${team}-q5`);
+  quarterOne.textContent = teamStat.q1Score;
+  quarterTwo.textContent = teamStat.q2Score;
+  quarterThree.textContent = teamStat.q3Score;
+  quarterFour.textContent = teamStat.q4Score;
+  quarterOt.textContent = teamStat.q5Score;
+  score.textContent = teamStat.totalScore;
+};

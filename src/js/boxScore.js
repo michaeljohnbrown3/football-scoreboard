@@ -1,61 +1,22 @@
 import * as boxScoreContainer from './boxScoreContainer';
-
-/*
-const awayFirst = document.querySelector('.away-first');
-const awaySecond = document.querySelector('.away-second');
-const awayThird = document.querySelector('.away-third');
-const awayFourth = document.querySelector('.away-fourth');
-const awayScoreDisplay = document.querySelector('.header__away--score');
-
-const homeFirst = document.querySelector('.home-first');
-const homeSecond = document.querySelector('.home-second');
-const homeThird = document.querySelector('.home-third');
-const homeFourth = document.querySelector('.home-fourth');
-const homeScoreDisplay = document.querySelector('.header__home--score');
-*/
+import * as plays from './plays';
+import { teamLoader } from './teamLoad';
+import { teamStatsArr } from './teamLoad';
 
 const otHeader = document.querySelector('.ot-header');
 const quarterDisplay = document.querySelector('.header__quarter');
 const quarterAdvanceBtn = document.querySelector('.game-btn__quarter');
 const quarters = ['1st', '2nd', '3rd', '4th', '0T', 'FINAL'];
 
-/*
-let awayBoxScore = [0, 0, 0, 0, 0];
-let homeBoxScore = [0, 0, 0, 0, 0];
-let awayScore;
-let homeScore;
-
-awayScore = awayBoxScore.reduce((prev, cur) => prev + cur, 0);
-homeScore = homeBoxScore.reduce((prev, cur) => prev + cur, 0);
-
-const appendScore = function (score, el) {
-  el.textContent = `${score}`;
-};
-*/
-
-// appendScore(awayBoxScore[0], awayFirst);
-// appendScore(awayBoxScore[1], awaySecond);
-// appendScore(awayBoxScore[2], awayThird);
-// appendScore(awayBoxScore[3], awayFourth);
-// appendScore(awayBoxScore[4], awayOT);
-// appendScore(awayScore, awayScoreDisplay);
-// appendScore(homeBoxScore[0], homeFirst);
-// appendScore(homeBoxScore[1], homeSecond);
-// appendScore(homeBoxScore[2], homeThird);
-// appendScore(homeBoxScore[3], homeFourth);
-// appendScore(homeBoxScore[4], homeOT);
-// appendScore(homeScore, homeScoreDisplay);
-
-let awayScore;
-let homeScore;
-
 let quarterIndex = 1;
+let awayScore;
+let homeScore;
 
 function advanceQuarter() {
   const awayOT = document.querySelector('.away-ot');
   const homeOT = document.querySelector('.home-ot');
-  awayScore = boxScoreContainer.boxScoresArr[0].calcScore();
-  homeScore = boxScoreContainer.boxScoresArr[1].calcScore();
+  awayScore = teamStatsArr[0].totalScore;
+  homeScore = teamStatsArr[1].totalScore;
 
   function displayOvertime(el) {
     el.removeAttribute('class', 'hidden');
@@ -76,7 +37,6 @@ function advanceQuarter() {
     displayOvertime(homeOT);
   }
   quarterDisplay.dataset.quarter = `q${quarterIndex}`;
-  console.log(quarterIndex);
 }
 
 quarterAdvanceBtn.addEventListener('click', advanceQuarter);
