@@ -314,7 +314,12 @@ class Play {
     passerId,
     receiverId,
     rusherId,
-    rushes
+    rushes,
+    q1Score,
+    q2Score,
+    q3Score,
+    q4Score,
+    q5Score
   ) {
     this.playId = playId;
     this.playType = playType;
@@ -340,12 +345,11 @@ class Play {
     this.receiverId = receiverId;
     this.rusherId = rusherId;
     this.rushingAttempt = rushes;
-  }
-
-  rushAttemptCalc() {
-    if (this.playType === 'rush') {
-      return 1;
-    }
+    this.q1Score = q1Score;
+    this.q2Score = q2Score;
+    this.q3Score = q3Score;
+    this.q4Score = q4Score;
+    this.q5Score = q5Score;
   }
 }
 
@@ -356,16 +360,24 @@ const players = [];
 const teams = teamLoader.teamStatsArr;
 
 const createPlay = function (team) {
+  /*
   const passStatEl = document.getElementById(`${team}-passer-totals`);
   const recStatEl = document.getElementById(`${team}-receiving-totals`);
   const teamStatsEl = document.getElementById(`${team}-team-stats`);
   const playsEl = document.getElementById(`${team}-plays-container`);
   const teamScoreEl = document.getElementById(`${team}-score`);
+  */
 
-  let rushingAttempt;
+  let rushingAttempt = 0;
+  let q1Score = 0;
+  let q2Score = 0;
+  let q3Score = 0;
+  let q4Score = 0;
+  let q5Score = 0;
 
   const playTypeDefine = function () {
     if (document.getElementById(`${team}-pass-input`).checked) {
+      rushingAttempt = 0;
       return 'pass';
     }
     if (document.getElementById(`${team}-rush-input`).checked) {
@@ -474,6 +486,16 @@ const createPlay = function (team) {
   );
   const teamId = team;
 
+  if (passingTouchdown === 1 || rushingTouchdown === 1) {
+    if (quarter === 'q1') q1Score = 6;
+    if (quarter === 'q2') q2Score = 6;
+    if (quarter === 'q3') q3Score = 6;
+    if (quarter === 'q4') q4Score = 6;
+    if (quarter === 'q5') q5Score = 6;
+  }
+
+  console.log(q2Score);
+
   if (passerName !== null && passerName.value !== '') {
     const newPasser = new Player(passer, passerNumber.value, teamId);
     newPasser.plays.push(playId);
@@ -540,7 +562,12 @@ const createPlay = function (team) {
     selectedPasser,
     selectedReceiver,
     selectedRusher,
-    rushingAttempt
+    rushingAttempt,
+    q1Score,
+    q2Score,
+    q3Score,
+    q4Score,
+    q5Score
   );
   plays.push(newPlay);
 
@@ -646,11 +673,11 @@ const updateTeamStats = function () {
         team.passingYards += play.passingYards;
         team.penalties += 0;
         team.penaltyYards += 0;
-        team.q1Score += 0;
-        team.q2Score += 0;
-        team.q3Score += 0;
-        team.q4Score += 0;
-        team.q5Score += 0;
+        team.q1Score += play.q1Score;
+        team.q2Score += play.q2Score;
+        team.q3Score += play.q3Score;
+        team.q4Score += play.q4Score;
+        team.q5Score += play.q5Score;
         team.rushingAttempts += play.rushingAttempt;
         team.rushingYards += play.rushingYards;
         team.totalPlays +=
@@ -661,27 +688,17 @@ const updateTeamStats = function () {
           team.q3Score +
           team.q4Score +
           team.q5Score;
-        team.totalYards = play.passingYards + play.rushingYards;
-        team.turnovers =
+        team.totalYards += play.passingYards + play.rushingYards;
+        team.turnovers +=
           play.interception + play.passingFumbleLost + play.rushingFumbleLost;
-        team.yardsPerPass =
-          Math.round(
-            (play.passingYards / (play.complete + play.incomplete)) * 10
-          ) / 10;
-        team.yardsPerPlay =
-          Math.round(
-            (play.totalYards /
-              (play.complete + play.incomplete + play.rushingAttempt)) *
-              10
-          ) / 10;
-        team.yardsPerRush =
-          Math.round((play.rushingYards / play.rushingAttempt) * 10) / 10;
+        team.yardsPerPass = team.passingYards / team.passingAttempts;
+        team.yardsPerPlay = team.totalYards / team.totalPlays;
+        team.yardsPerRush = team.rushingYards / team.rushingAttempts;
       }
     });
   });
 };
 
-/////////////// Fix team stats append
 /////////////// Append stats arrays to proper DOM location
 
 const submitBtnAction = function (team) {
