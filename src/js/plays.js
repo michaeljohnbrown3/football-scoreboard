@@ -519,31 +519,12 @@ const submitBtnAction = function (team) {
       const playContainer = document.getElementById(
         `${play.team}-plays-container`
       );
-      appendPlayNarration(
-        playContainer,
-        play,
-        plays,
-        teamStatContainer,
-        team,
-        selectedTeam
-      );
+      appendPlayNarration(playContainer, play, plays, teams, players);
     });
 
     updateTotalPasserStats(selectedTeam);
     updateTotalRushingStats(selectedTeam);
     updateTotalReceivingStats(selectedTeam);
-  });
-
-  const deleteBtn = document.getElementById(`play${play.playId}-delete`);
-  deleteBtn.addEventListener('click', () => {
-    console.log(`Delete play: ${play.playId}`);
-    playsArr.forEach(playObj => {
-      if (playObj.playId === play.playId) {
-        playsArr.splice(playsArr.indexOf(playObj), 1);
-        updateTeamStatDisplay(teamStatContainer, team, selectedTeam);
-        console.log(playsArr);
-      }
-    });
   });
 };
 

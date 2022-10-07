@@ -1,12 +1,21 @@
+import { updatePlayerStats } from './classesjs/player';
+import { updateTeamStats } from './classesjs/team';
+import {
+  updatePasserStats,
+  updateReceiverStats,
+  updateRusherStats,
+  updateTotalPasserStats,
+  updateTotalReceivingStats,
+  updateTotalRushingStats,
+} from './playerStatsContainer';
 import { updateTeamStatDisplay } from './teamStatsContainer';
 
 export const appendPlayNarration = function (
   el,
   play,
   playsArr,
-  teamStatContainer,
-  team,
-  selectedTeam
+  teamsArr,
+  playersArr
 ) {
   if (play.complete == 1) {
     el.insertAdjacentHTML(
@@ -40,5 +49,49 @@ export const appendPlayNarration = function (
         </div>
     `
     );
+
+    const deleteBtn = document.getElementById(`play${play.playId}-delete`);
+    const teamStatContainer = document.getElementById(
+      `${play.team}-team-stats`
+    );
+    const passerStatContainer = document.getElementById(`${play.team}-passers`);
+    const rushingStatContainer = document.getElementById(
+      `${play.team}-rushers`
+    );
+    const receivingStatContainer = document.getElementById(
+      `${play.team}-receivers`
+    );
+    deleteBtn.addEventListener('click', () => {
+      console.log(`Delete play: ${play.playId}`);
+      playsArr.forEach(playObj => {
+        if (playObj.playId === play.playId) {
+          playsArr.splice(playsArr.indexOf(playObj), 1);
+          updateTeamStats(teamsArr, playsArr);
+          updatePlayerStats(playersArr, playsArr);
+
+          let selectedTeam;
+          teamsArr.forEach(tm => {
+            if (tm.id === play.team) {
+              selectedTeam = tm;
+            }
+          });
+          updateTeamStatDisplay(teamStatContainer, play.team, selectedTeam);
+          playersArr.forEach(playerObj => {
+            if (playerObj.name === play.passer) {
+              updatePasserStats(playerObj);
+            }
+            if (playerObj.name === play.receiver) {
+              updateReceiverStats(playerObj);
+            }
+            if (playerObj.name === play.rusher) {
+              updateRusherStats(playerObj);
+            }
+          });
+          updateTotalPasserStats(selectedTeam);
+          updateTotalRushingStats(selectedTeam);
+          updateTotalReceivingStats(selectedTeam);
+        }
+      });
+    });
   }
 };
