@@ -21,6 +21,7 @@ import {
   updateTotalReceivingStats,
   updateTotalRushingStats,
 } from './playerStatsContainer';
+import { appendPlayNarration } from './playsContainer';
 
 export const displayPlays = function (container) {
   container.style.height = 'calc(100vh - 16.8rem)';
@@ -480,7 +481,6 @@ const submitBtnAction = function (team) {
     boxScoreContainer.updateBoxScoreDisplay(team, selectedTeam);
 
     players.forEach(player => {
-      console.log(player);
       if (player.teamId === team) {
         const passerEl = document.getElementById(`${player.playerId}-passing`);
         const rusherEl = document.getElementById(`${player.playerId}-rushing`);
@@ -511,6 +511,18 @@ const submitBtnAction = function (team) {
           updateReceiverStats(player);
         }
       }
+    });
+
+    const playContainerReset = document.querySelectorAll('.plays-container');
+    playContainerReset.forEach(playCont => {
+      playCont.innerHTML = '';
+    });
+
+    plays.forEach(play => {
+      const playContainer = document.getElementById(
+        `${play.team}-plays-container`
+      );
+      appendPlayNarration(playContainer, play, plays);
     });
 
     updateTotalPasserStats(selectedTeam);
