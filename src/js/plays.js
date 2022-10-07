@@ -473,6 +473,7 @@ const submitBtnAction = function (team) {
 
   submitBtn.addEventListener('click', e => {
     e.preventDefault();
+
     playInputActionsRemove();
     createPlay(team);
     updatePlayerStats(players, plays);
@@ -487,10 +488,6 @@ const submitBtnAction = function (team) {
         const receivingEl = document.getElementById(
           `${player.playerId}-receiving`
         );
-
-        // passerStatContainer.innerHTML = '';
-        // rushingStatContainer.innerHTML = '';
-        // receivingStatContainer.innerHTML = '';
 
         if (player.passAttempts == 1 && passerEl === null) {
           appendPasserStats(passerStatContainer, player);
@@ -522,12 +519,31 @@ const submitBtnAction = function (team) {
       const playContainer = document.getElementById(
         `${play.team}-plays-container`
       );
-      appendPlayNarration(playContainer, play, plays);
+      appendPlayNarration(
+        playContainer,
+        play,
+        plays,
+        teamStatContainer,
+        team,
+        selectedTeam
+      );
     });
 
     updateTotalPasserStats(selectedTeam);
     updateTotalRushingStats(selectedTeam);
     updateTotalReceivingStats(selectedTeam);
+  });
+
+  const deleteBtn = document.getElementById(`play${play.playId}-delete`);
+  deleteBtn.addEventListener('click', () => {
+    console.log(`Delete play: ${play.playId}`);
+    playsArr.forEach(playObj => {
+      if (playObj.playId === play.playId) {
+        playsArr.splice(playsArr.indexOf(playObj), 1);
+        updateTeamStatDisplay(teamStatContainer, team, selectedTeam);
+        console.log(playsArr);
+      }
+    });
   });
 };
 

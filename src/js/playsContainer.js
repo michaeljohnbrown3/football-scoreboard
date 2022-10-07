@@ -1,6 +1,13 @@
-import { hidePlays } from './plays';
+import { updateTeamStatDisplay } from './teamStatsContainer';
 
-export const appendPlayNarration = function (el, play, playsArr) {
+export const appendPlayNarration = function (
+  el,
+  play,
+  playsArr,
+  teamStatContainer,
+  team,
+  selectedTeam
+) {
   if (play.complete == 1) {
     el.insertAdjacentHTML(
       'beforeend',
@@ -33,15 +40,5 @@ export const appendPlayNarration = function (el, play, playsArr) {
         </div>
     `
     );
-
-    const deleteBtn = document.getElementById(`play${play.playId}-delete`);
-    deleteBtn.addEventListener('click', () => {
-      console.log(`Delete play: ${play.playId}`);
-      playsArr.forEach(playObj => {
-        if (playObj.playId === play.playId) {
-          playsArr.splice(playObj, 1);
-        }
-      });
-    });
   }
 };
