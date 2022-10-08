@@ -89,6 +89,10 @@ const setPlaysContainerId = function (team, el) {
   el.setAttribute('id', `${team}-plays-container`);
 };
 
+const setPlusOneId = function (team, el) {
+  el.setAttribute('id', `${team}-plus-one`);
+};
+
 export let awayTeamId;
 export let homeTeamId;
 
@@ -127,6 +131,7 @@ export const kickoffInit = () => {
       awayTeamId = team.id;
       appendStatSheet(awayPlayerStats, 'away', awayTeamId);
       setPlaysContainerId(team.id, awayPlaysContainers);
+      setPlusOneId(team.id, document.querySelector('.away-btn__plus-one'));
     }
     if (homeSelected === team.id) {
       const homeTeam = new Team(homeSelected);
@@ -152,6 +157,7 @@ export const kickoffInit = () => {
       homeTeamId = team.id;
       appendStatSheet(homePlayerStats, 'home', homeTeamId);
       setPlaysContainerId(team.id, homePlaysContainers);
+      setPlusOneId(team.id, document.querySelector('.home-btn__plus-one'));
     }
   });
   const boxScoreAway = boxScoreContainer.boxScoresArr.find(

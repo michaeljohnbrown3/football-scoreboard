@@ -111,6 +111,9 @@ export const offensivePlayMarkup = function (el, team) {
           </div>
         </div>
       </div>
+      <div class="play-input__selectors--pat">
+        
+      </div>
     </div>
   </div>
   <div class="play-input__submit-container">
