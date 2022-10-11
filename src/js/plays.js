@@ -252,13 +252,6 @@ const players = [];
 const teams = teamLoader.teamStatsArr;
 
 const createPlay = function (team) {
-  /*
-  const passStatEl = document.getElementById(`${team}-passer-totals`);
-  const recStatEl = document.getElementById(`${team}-receiving-totals`);
-  const teamStatsEl = document.getElementById(`${team}-team-stats`);
-  const playsEl = document.getElementById(`${team}-plays-container`);
-  const teamScoreEl = document.getElementById(`${team}-score`);
-  */
   const playId = uuid();
   const quarter = document.querySelector(`.header__quarter`).dataset.quarter;
   const passerSelector = document.getElementById(`passer-selector-${team}`);
